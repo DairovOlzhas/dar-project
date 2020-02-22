@@ -1,11 +1,246 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"errors"
+	"github.com/streadway/amqp"
+	"log"
+	"math/rand"
+	"os"
+	"strings"
+)
+
+var (
+	ch *amqp.Channel
+	session chan bool
+	conn *amqp.Connection
+	users []User
+	window_width = 800
+	window_height  = 500
+)
+
+type User struct {
+	username string
+	ID string
+	x,y int
+}
+
+func failOnError(err error, msg string){
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err.Error())
+	}
+}
+
+func usernameFrom(args []string) (s string) {
+	if len(args) < 2 || args[1] == "" {
+		s = "username"
+	}else{
+		s = strings.Join(args, " ")
+	}
+	return
+}
+
+func genRandString(l int) string {
+	bytes := make([]byte, l)
+
+	for i:=0; i < l; i++ {
+		bytes[i] = byte(randInt(65,90))
+	}
+	return string(bytes)
+}
+
+func randInt(min int, max int) int {
+	return min + rand.Intn(max-min)
+}
+
+func sendCommand(command string){
+	err := ch.Publish(
+		"",
+		"commands",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType:     "text/plain",
+			Body:            []byte(command),
+		})
+	failOnError(err, "Fail to publish a command")
+}
+
+func createSession(username string) (err error) {
+
+	user := User{username,genRandString(32), randInt(50, window_width-50), randInt(50, window_height-50)}
+	body, err := json.Marshal(user)
+
+	err = ch.Publish(
+		"",
+		"users",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType:     "application/json",
+			CorrelationId:   user.ID,
+			Body:            body,
+		},
+		)
+
+	msgs, err := ch.Consume(
+		"users",
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+		)
+
+	go func(){
+		for d := range msgs {
+			if d.CorrelationId == user.ID{
+				<-session
+				sendCommand("delete "+user.ID)
+				d.Ack(false)
+			}
+		}
+	}()
+
+	return
+}
+
+func getOnlineUsers() (users []User, err error) {
+
+
+	msgs, err := ch.Consume(
+		"users",
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	failOnError(err, "Failed to register a consumer")
+
+	q, err := ch.QueueInspect("users")
+	failOnError(err, "Failed to inspect queue")
+	n := q.Messages
+
+	for d := range msgs {
+		n--
+		user := User{}
+		err = json.Unmarshal(d.Body, user)
+		failOnError(err, "Failed to receive User")
+		users = append(users, user)
+		if n == 0 {
+			break
+		}
+	}
+
+	return
+}
+
+func rabbitMQ() (err error){
+	conn, err = amqp.Dial("amqp://guest:guest@localhost:5672/")
+	failOnError(err, "Failed to connect RabbitMQ")
+
+	ch, err = conn.Channel()
+	failOnError(err, "Failed to open a channel")
+
+	_, err = ch.QueueDeclare(
+		"users",
+		false,
+		false,
+		true,
+		false,
+		nil,
+	)
+	failOnError(err, "Failed to declare a queue")
+
+	_, err = ch.QueueDeclare(
+		"commands",
+		false,
+		false,
+		true,
+		false,
+		nil,
+	)
+	failOnError(err, "Failed to declare a queue")
+
+
+	return
+}
 
 func main() {
-	fmt.Println("asdf")
-	///
-	fmt.Println("asdfasdf")
-	//asdflkj
-	//asdfsadf
+
+	err := rabbitMQ()
+	defer conn.Close()
+	defer ch.Close()
+	failOnError(err, "Failed to configure RabbitMQ")
+
+	username := usernameFrom(os.Args)
+
+	err = createSession(username)
+	failOnError(err, "Failed to create a session")
+
+	users, err = getOnlineUsers()
+	failOnError(err, "Failed to get users")
+
+	run()
+}
+
+func listenCommands(){
+	msgs, err := ch.Consume(
+		"commands",
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+		)
+	failOnError(err, "Failed to register a consumer")
+
+	go func() {
+		for d := range msgs {
+			command := strings.Split(string(d.Body), " ")
+			if len(command) < 2 {failOnError(errors.New("worng command"), "Failed to read command")}
+			id := command[1]
+			switch command[0] {
+			case "delete":
+				for i, u := range users {
+					if u.ID == id {
+						users = append(users[:i], users[i+1:]...)
+						break
+					}
+				}
+				break
+			case "move":
+				if len(command) < 3 {failOnError(errors.New("worng command"), "Failed to read command")}
+				switch command[2] {
+				case "left":
+					for _, u := range users { if u.ID == id { u.x--; break } }
+					break
+				case "right":
+					for _, u := range users { if u.ID == id { u.x++; break } }
+					break
+				case "up":
+					for _, u := range users { if u.ID == id { u.y++; break } }
+					break
+				case "down":
+					for _, u := range users { if u.ID == id { u.y--; break } }
+					break
+				}
+			}
+		}
+	}()
+
+}
+
+func run(){
+
+	listenCommands()
+	for _ {
+
+
+
+	}
 }
