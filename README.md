@@ -4,6 +4,8 @@
 Игра в танки. Пользователь подключается к серверу и ждет пока кто то еще подключиться к серверу, 
 который тоже должен будет подключиться к серверу. То есть каждая пара подключенная к серверу будет играть между собой.
 
+ Design [Board](https://miro.com/welcomeonboard/OWLgM1ynjkgtlGaWwsf4BtbBBZAQRoz2vBgMBjpnB5Wzm0RiYAtHOZ6vsSBApGCi)
+
 ##### Rule of game
 
 
