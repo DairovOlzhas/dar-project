@@ -21,7 +21,20 @@
 
 
 ###### Frontend side:
+1. Front on console
 1) Read pressing buttons from keyboard, then send to server
 2) Request for image or get response from server without request
 3) Draw getted image
-4) token for identification users
+4) Name 
+
+tasks
+
+1. Понять как работает rabbitmq и как его использовать. 
+    1. when server switch off remove queue from rabbit
+    2. List of users. Yes/NO
+    3. generating and sending map 
+    4. Physics of game (bullet, wall, moving)
+2. 
+
+типы 
+вин луз 
