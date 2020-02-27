@@ -6,30 +6,9 @@
 
  Design [Board](https://miro.com/welcomeonboard/OWLgM1ynjkgtlGaWwsf4BtbBBZAQRoz2vBgMBjpnB5Wzm0RiYAtHOZ6vsSBApGCi)
 
-##### Rule of game
 
 
-
-##### Design 
-
-###### Backend side:
-1. Game logic
-    1. Start menu
-    2. Game process
-        1. Loading map
-        2. Creating tanks
-        3. Listening for commands from frontend
-    3. End of game
-
-
-###### Frontend side:
-1. Front on console
-1) Read pressing buttons from keyboard, then send to server
-2) Request for image or get response from server without request
-3) Draw getted image
-4) Name 
-
-tasks
+##### TO DO
 
 1. Понять как работает rabbitmq и как его использовать. 
     1. when server switch off remove queue from rabbit
