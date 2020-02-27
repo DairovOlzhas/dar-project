@@ -6,37 +6,17 @@
 
  Design [Board](https://miro.com/welcomeonboard/OWLgM1ynjkgtlGaWwsf4BtbBBZAQRoz2vBgMBjpnB5Wzm0RiYAtHOZ6vsSBApGCi)
 
-##### Rule of game
+### todo
 
-
-
-##### Design 
-
-###### Backend side:
-1. Game logic
-    1. Start menu
-    2. Game process
-        1. Loading map
-        2. Creating tanks
-        3. Listening for commands from frontend
-    3. End of game
-
-
-###### Frontend side:
-1. Front on console
-1) Read pressing buttons from keyboard, then send to server
-2) Request for image or get response from server without request
-3) Draw getted image
-4) Name 
-
-tasks
-
-1. Понять как работает rabbitmq и как его использовать. 
-    1. when server switch off remove queue from rabbit
-    2. List of users. Yes/NO
-    3. generating and sending map 
-    4. Physics of game (bullet, wall, moving)
-2. 
-
-типы 
-вин луз 
+1. проверка на онлайн. каждый проверяет одного. очередь для проверки.
+ 
+    **Онлайн юзер**:
+    1. проверяет одного юзера.
+    2. если проверяющийся юзер вышел из сети
+        1. посылает команду для его удаления
+        2. делает Ack
+        3. Получает другого юзера на проверку
+            Другой юзер это:
+            1. Юзер который проверялся  юзером который вышел из сети
+            2. Он попадает обратно в очередь 
+            3. И попадает к онлайн юзеру
