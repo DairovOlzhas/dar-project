@@ -6,16 +6,17 @@
 
  Design [Board](https://miro.com/welcomeonboard/OWLgM1ynjkgtlGaWwsf4BtbBBZAQRoz2vBgMBjpnB5Wzm0RiYAtHOZ6vsSBApGCi)
 
+### todo
 
-
-##### TO DO
-
-1. Понять как работает rabbitmq и как его использовать. 
-    1. when server switch off remove queue from rabbit
-    2. List of users. Yes/NO
-    3. generating and sending map 
-    4. Physics of game (bullet, wall, moving)
-2. 
-
-типы 
-вин луз 
+1. проверка на онлайн. каждый проверяет одного. очередь для проверки.
+ 
+    **Онлайн юзер**:
+    1. проверяет одного юзера.
+    2. если проверяющийся юзер вышел из сети
+        1. посылает команду для его удаления
+        2. делает Ack
+        3. Получает другого юзера на проверку
+            Другой юзер это:
+            1. Юзер который проверялся  юзером который вышел из сети
+            2. Он попадает обратно в очередь 
+            3. И попадает к онлайн юзеру
