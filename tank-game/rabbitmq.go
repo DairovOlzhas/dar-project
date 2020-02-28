@@ -2,27 +2,21 @@ package tank_game
 
 import (
 	"github.com/streadway/amqp"
-	"log"
 )
 
 var (
-	conn *amqp.Connection
-	ch *amqp.Channel
-	rabbitMQURL = "amqp://guest:guest@localhost:5672/"
+	conn               *amqp.Connection
+	ch                 *amqp.Channel
+	rabbitMQURL        = "amqp://guest:guest@localhost:5672/"
 	onlinePlayersQueue = "onlinePlayers"
-	commandsExchange = "commands"
+	commandsExchange   = "commands"
+	receiverQueue      amqp.Queue
 )
 
-func failOnError(err error, msg string, ok string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-	}
-	log.Printf(" [*] " + ok)
-}
 
 func RabbitMQ() (err error){
 	conn, err = amqp.Dial(rabbitMQURL)
-	failOnError(err, "Failed to connect RbbitMQ", "Connected to RabbitMQ")
+	failOnError(err, "Failed to connect RabbitMQ", "Connected to RabbitMQ")
 
 	ch, err = conn.Channel()
 	failOnError(err, "Failed to open a Channel", "Channel opened")
@@ -40,11 +34,29 @@ func RabbitMQ() (err error){
 	_, err = ch.QueueDeclare(
 		onlinePlayersQueue,
 		false,
-		false,
+		true,
 		false,
 		false,
 		nil,
 		)
+	failOnError(err, "Failed to declare onlinePlayersQueue", "onlinePlayersQueue declared")
+
+	receiverQueue, err = ch.QueueDeclare(
+		"",
+		false,
+		false,
+		true,
+		false,
+		nil)
+	failOnError(err, "Failed to declare receiverQueue", "receiverQueue declared")
+
+	err = ch.QueueBind(
+		receiverQueue.Name,
+		"",
+		commandsExchange,
+		false,
+		nil)
+	failOnError(err, "Failed to bind receiverQueue", "receiverQueue bound")
 
 	return
 }
@@ -57,9 +69,15 @@ func CloseConnectionAndChannel() (err error){
 	return
 }
 
-func GetOnlinePlayersQueueName() string {
+func OnlinePlayersQueueName() string {
 	return onlinePlayersQueue
 }
-func GetCommandsExchangeName() string {
+func CommandsExchangeName() string {
 	return commandsExchange
+}
+func Channel() *amqp.Channel{
+	return ch
+}
+func ReceiverQueueName() string{
+	return receiverQueue.Name
 }
