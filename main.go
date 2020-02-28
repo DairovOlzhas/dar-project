@@ -1,4 +1,4 @@
-package main
+spackage main
 
 import (
 	tg "github.com/dairovolzhas/dar-project/tank-game"
