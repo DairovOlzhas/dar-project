@@ -144,10 +144,10 @@ func listenCommands() {
 
 func SendCommand(c Command){
 
-	body, err := json.Marshal(c)
-	failOnError(err, "Failed to marshal a command", "Command marsheled")
+	body, _ := json.Marshal(c)
+	//failOnError(err, "Failed to marshal a command", "Command marsheled")
 
-	err = ch.Publish(
+	_ = ch.Publish(
 		commandsExchange,
 		"",
 		false,

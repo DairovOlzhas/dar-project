@@ -79,16 +79,12 @@ func (p *Player) Tick(event tl.Event) {
 			switch event.Key {
 
 			case tl.KeyArrowUp:
-				log.Println("Up pressed")
 				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: UP})
 			case tl.KeyArrowDown:
-				log.Println("Down pressed")
 				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: DOWN})
 			case tl.KeyArrowRight:
-				log.Println("Right pressed")
 				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: RIGHT})
 			case tl.KeyArrowLeft:
-				log.Println("Left pressed")
 				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: LEFT})
 
 			case tl.KeySpace:
