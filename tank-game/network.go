@@ -36,7 +36,6 @@ const (
 	TANK = 0
 	BULLET = 1
 	DELETE = 2
-	POSITION = 3
 )
 
 

@@ -16,6 +16,7 @@ func StartGame() {
 	game.Screen().SetFps(fps)
 	game.Screen().EnablePixelMode()
 	game.SetDebugOn(true)
+
 	Level = tl.NewBaseLevel(tl.Cell{})
 	game.Screen().SetLevel(Level)
 

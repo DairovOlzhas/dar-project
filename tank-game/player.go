@@ -137,18 +137,15 @@ func (p *Player) Draw(screen *tl.Screen) {
 	p.Entity.Draw(screen)
 }
 
+func (p *Player) Collide(collision tl.Physical) {
+	if p.ID == CurrentPlayerID {
+		if _, ok := collision.(Bullet); ok {
 
-//TODO
-//func (p *Player) Collide(collision tl.Physical) {
-//
-//	if _, ok := collision.(tank.Bullet); ok {
-//
-//		// remove from screen
-//		Level.RemoveEntity(p)
-//
-//	} else if _, ok := collision.(tank.Tank); ok {
-//		p.SetPosition(p.preX, p.preY)
-//	}
-//
-//}
+			// remove from screen
+			SendCommand(Command{ID:p.ID, Action:DELETE,})
+		} else if _, ok := collision.(Tank); ok {
+			p.SetPosition(p.PreX, p.PreY)
+		}
+	}
+}
 
