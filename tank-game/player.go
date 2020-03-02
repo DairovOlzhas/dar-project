@@ -10,18 +10,20 @@ import (
 
 type Player struct {
 	*Tank
-	ID string
+	ID       string
 	Username string
-	PreX  int
-	PreY  int
-	Score int
+	preY 	 int
+	preX 	 int
+	Score    int
 }
 
 func failOnError(err error, msg string, ok string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		log.Fatalf("%s: error %s", msg, err)
 	}
-	log.Printf(" [*] " + ok)
+	if len(ok) != 0{
+		log.Printf(" [*] " + ok)
+	}
 }
 func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
@@ -36,6 +38,7 @@ func genRandString(l int) string {
 }
 
 func CreatePlayer() error {
+
 	playerOnline := PlayerOnline{
 		ID:        genRandString(32),
 		Username:  genRandString(10),
@@ -59,10 +62,8 @@ func CreatePlayer() error {
 		false,
 		amqp.Publishing{
 			ContentType:     "",
-			ReplyTo:         ReceiverQueueName(),
 			Body:            body,
 		})
-	log.Printf("Online player sended %v", playerOnline)
 	failOnError(err, "Failed to pusblish onlineplayer", "onlineplayer published")
 
 	return err
@@ -72,43 +73,41 @@ func (p *Player) Tick(event tl.Event) {
 	if p.ID == CurrentPlayerID {
 		if event.Type == tl.EventKey {
 
-			var bulletX, bulletY, bulletDirection int
+			var bulletX, bulletY, bulletDirection  int
 			bulletDirection = p.Tank.GetDirection()
-			p.PreX, p.PreY = p.Position()
+
+			p.preX, p.preY = p.Position()
 
 			switch event.Key {
-
 			case tl.KeyArrowUp:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: UP})
+				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX, Y: p.preY - 1, Direction: UP})
 			case tl.KeyArrowDown:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: DOWN})
+				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX, Y: p.preY + 1, Direction: DOWN})
 			case tl.KeyArrowRight:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: RIGHT})
+				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX + 1, Y: p.preY, Direction: RIGHT})
 			case tl.KeyArrowLeft:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.PreX, Y: p.PreY, Direction: LEFT})
-
+				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX - 1, Y: p.preY, Direction: LEFT})
 			case tl.KeySpace:
 				switch bulletDirection {
-
 				case UP:
-					bulletX = p.PreX + 4
-					bulletY = p.PreY
+					bulletX = p.preX + 4
+					bulletY = p.preY - 1
 				case DOWN:
-					bulletX = p.PreX + 4
-					bulletY = p.PreY + 9
+					bulletX = p.preX + 4
+					bulletY = p.preY + 10
 				case LEFT:
-					bulletX = p.PreX
-					bulletY = p.PreY + 4
+					bulletX = p.preX - 1
+					bulletY = p.preY + 4
 				case RIGHT:
-					bulletX = p.PreX + 9
-					bulletY = p.PreY + 4
+					bulletX = p.preX + 10
+					bulletY = p.preY + 4
 				}
 				SendCommand(Command{
 					ID:        p.ID,
 					Action:    BULLET,
 					X:         bulletX,
 					Y:         bulletY,
-					Direction: p.direction,
+					Direction: bulletDirection,
 				})
 			}
 
@@ -139,12 +138,23 @@ func (p *Player) Draw(screen *tl.Screen) {
 
 func (p *Player) Collide(collision tl.Physical) {
 	if p.ID == CurrentPlayerID {
+		// remove from screen
+		//p.SetPosition(p.preX, p.preY)
 		if _, ok := collision.(Bullet); ok {
-
-			// remove from screen
+			log.Println("colission BULLET")
 			SendCommand(Command{ID:p.ID, Action:DELETE,})
-		} else if _, ok := collision.(Tank); ok {
-			p.SetPosition(p.PreX, p.PreY)
+		}else if _, ok := collision.(*Player); ok {
+			log.Println("colission TANK")
+			switch p.direction {
+			case UP:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY+1, Direction: p.direction})
+			case DOWN:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY-1, Direction: p.direction})
+			case RIGHT:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX-1, Y:p.preY, Direction: p.direction})
+			case LEFT:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX+1, Y:p.preY, Direction: p.direction})
+			}
 		}
 	}
 }

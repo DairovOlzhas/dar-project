@@ -30,6 +30,8 @@ func (tank *Tank) Draw(screen *tl.Screen) {
 
 	tank.Entity.Draw(screen)
 }
+func (tank *Tank) Tick(event tl.Event) {}
+
 
 func TankUpCanvas(tankBodyCell tl.Cell) tl.Canvas {
 

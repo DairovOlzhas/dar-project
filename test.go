@@ -1,38 +1,51 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/streadway/amqp"
 )
 
 var (
-	mp map[string]*class
+	chh *amqp.Channel
 )
 
 
-type class struct {
-	A int    `json:"a"`
-	B string `json:"b"`
-	//c tl.Attr
-}
-
-type response1 struct {
-	Page   int
-	Fruits []string
-}
-
 func main() {
-	cl := &class{
-		A: 123,
-		B: "asdf",
+
+	conn, _  := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	chh, _ = conn.Channel()
+
+	_, _ = chh.QueueDeclare(
+		"dfg",
+		false,
+		false,
+		true,
+		false,
+		nil,
+	)
+
+	go func() {
+		for d := range chh.NotifyReturn(make(chan amqp.Return)) {
+			fmt.Println(string(d.Body))
+		}
+	}()
+
+	for i:=0; i < 10; i++ {
+		_, err := chh.QueueDeclarePassive(
+			"dfg",
+			false,
+			false,
+			true,
+			false,
+			nil,
+			)
+		if err != nil {
+			fmt.Println("asdfg")
+		}else{
+			fmt.Println("kkkk")
+		}
 	}
-	asdf, _ := json.Marshal(cl)
-	fmt.Println(string(asdf))
 
-
-	res1D := &response1{
-		Page:   1,
-		Fruits: []string{"apple", "peach", "pear"}}
-	res1B, _ := json.Marshal(res1D)
-	fmt.Println(string(res1B))
+	forever := make(chan bool)
+	<- forever
 }
