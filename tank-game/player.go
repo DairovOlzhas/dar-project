@@ -43,8 +43,8 @@ func CreatePlayer() error {
 		ID:        genRandString(32),
 		Username:  genRandString(10),
 		Score:     0,
-		X:         randInt(0,25),
-		Y:         randInt(0,25),
+		X:         randInt(15,30),
+		Y:         randInt(15,30),
 		Direction: UP,
 		Color:     tl.RgbTo256Color(randInt(0,256), randInt(0,256),randInt(0,256)),
 	}
@@ -132,6 +132,9 @@ func (p *Player) Draw(screen *tl.Screen) {
 	}
 	if tY > sY-9 {
 		p.SetPosition(tX, tY-1)
+	}
+	if p.ID == CurrentPlayerID {
+		Level.SetOffset(sX/2-tX-5, sY/2-tY-5)
 	}
 	p.Entity.Draw(screen)
 }

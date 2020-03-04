@@ -16,7 +16,7 @@ func StartGame() {
 	game.Screen().SetFps(fps)
 	game.Screen().EnablePixelMode()
 
-	Level = tl.NewBaseLevel(tl.Cell{})
+	Level = tl.NewBaseLevel(tl.Cell{Bg: tl.ColorWhite})
 	game.Screen().SetLevel(Level)
 
 	//	Load map

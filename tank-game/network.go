@@ -203,7 +203,6 @@ func CheckOnlinePlayers(){
 				failOnError(err, "Failed to register a consumer", "")
 
 				cnt := 0
-
 				go func() {
 					for range msgs {
 						cnt++
@@ -212,7 +211,6 @@ func CheckOnlinePlayers(){
 				}()
 
 				time.Sleep(100*time.Millisecond)
-
 				if cnt == 0 {
 					SendCommand(Command{ID:d.CorrelationId, Action:DELETE,})
 					d.Ack(false)

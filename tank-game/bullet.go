@@ -14,7 +14,7 @@ func NewBullet(x, y, d int) Bullet {
 		Entity:    tl.NewEntity(x, y, 1, 1),
 		direction: d,
 	}
-	b.SetCell(0, 0, &tl.Cell{Fg: tl.ColorWhite, Bg: tl.ColorWhite})
+	b.SetCell(0, 0, &tl.Cell{Fg: tl.ColorBlack, Bg: tl.ColorBlack})
 
 	return b
 }
