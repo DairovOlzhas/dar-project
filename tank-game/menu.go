@@ -3,18 +3,36 @@ package tank_game
 import (
 	"fmt"
 	tl "github.com/JoelOtter/termloop"
+	"log"
+)
+
+var (
+	Menuhidden = false
 )
 
 type Menu struct {
 	items []*tl.Text
 	index int
-	selected bool
-
 }
 
+const (
+	START_OR_RESUME_GAME = 0
+	CHANGENAME 	= 	1
+	EXIT 		=	2
+)
+
 func (m *Menu) Tick(ev tl.Event) {
+	if _, prs := players[CurrentPlayerID]; !prs {
+		m.items[0].SetText("Start game")
+		Menuhidden = false
+	}else{
+		m.items[0].SetText("Resume")
+	}
 	if ev.Type == tl.EventKey {
 		switch ev.Key {
+		case tl.Key(127):
+			log.Println(ev.Ch)
+			Menuhidden = false
 		case tl.KeyArrowUp:
 			if m.index > 0 {
 				m.index -= 1
@@ -28,14 +46,31 @@ func (m *Menu) Tick(ev tl.Event) {
 				m.items[m.index-1].SetColor(tl.ColorBlack, tl.ColorWhite)
 			}
 		case tl.KeyEnter:
-			m.selected = true
-			Game().Screen().RemoveEntity(m)
+			switch m.index {
+			case START_OR_RESUME_GAME:
+				if _, prs := players[CurrentPlayerID]; !prs {
+					CreatePlayer()
+					CheckOnlinePlayers()
+				}
+				Menuhidden = true
+			case EXIT:
+				Game.Stop()
+			}
+		default:
+			log.Println(ev)
 		}
 	}
 }
 func (m *Menu) Draw(s *tl.Screen) {
-	for i,_ := range m.items {
-		m.items[i].Draw(s)
+	if !Menuhidden {
+		Level.SetOffset(0,0)
+		sx, sy := s.Size()
+		//dx, dy := Level.Offset()
+		for i,_ := range m.items {
+			ix, iy := m.items[i].Size()
+			m.items[i].SetPosition(sx/2-ix/2, sy/2-iy/2+i-len(m.items))
+			m.items[i].Draw(s)
+		}
 	}
 }
 
@@ -43,7 +78,6 @@ func CreateMenu(arg_items []string) int {
 
 	menu := Menu{
 		items:    make([]*tl.Text, len(arg_items)),
-		selected: false,
 		index: 	  0,
 	}
 	for i, item := range arg_items {
@@ -52,6 +86,7 @@ func CreateMenu(arg_items []string) int {
 			menu.items[i] = tl.NewText(0,i, item, tl.ColorWhite, tl.ColorBlack)
 		}
 	}
+	Level.AddEntity(&menu)
 	return menu.index
 }
 

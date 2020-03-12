@@ -70,7 +70,7 @@ func CreatePlayer() error {
 }
 
 func (p *Player) Tick(event tl.Event) {
-	if p.ID == CurrentPlayerID {
+	if p.ID == CurrentPlayerID && Menuhidden{
 		if event.Type == tl.EventKey {
 
 			var bulletX, bulletY, bulletDirection  int
@@ -110,10 +110,8 @@ func (p *Player) Tick(event tl.Event) {
 					Direction: bulletDirection,
 				})
 			}
-
 		}
 	}
-
 }
 
 func (p *Player) Draw(screen *tl.Screen) {
@@ -123,31 +121,33 @@ func (p *Player) Draw(screen *tl.Screen) {
 
 	if tX < 0 {
 		p.SetPosition(tX+1, tY)
+		//p.SetPosition(sX, tY)
 	}
 	if tX > sX-9 {
 		p.SetPosition(tX-1, tY)
+		//p.SetPosition(0, tY)
 	}
 	if tY < 0 {
 		p.SetPosition(tX, tY+1)
+		//p.SetPosition(tX, sY)
 	}
 	if tY > sY-9 {
 		p.SetPosition(tX, tY-1)
+		//p.SetPosition(tX, 0)
 	}
-	if p.ID == CurrentPlayerID {
+	if p.ID == CurrentPlayerID && Menuhidden{
 		Level.SetOffset(sX/2-tX-5, sY/2-tY-5)
 	}
-	p.Entity.Draw(screen)
+	if Menuhidden {
+		p.Entity.Draw(screen)
+	}
 }
 
 func (p *Player) Collide(collision tl.Physical) {
 	if p.ID == CurrentPlayerID {
-		// remove from screen
-		//p.SetPosition(p.preX, p.preY)
 		if _, ok := collision.(Bullet); ok {
-			log.Println("colission BULLET")
 			SendCommand(Command{ID:p.ID, Action:DELETE,})
-		}else if _, ok := collision.(*Player); ok {
-			log.Println("colission TANK")
+		}else if _, pl := collision.(*Player); pl {
 			switch p.direction {
 			case UP:
 				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY+1, Direction: p.direction})
@@ -157,6 +157,17 @@ func (p *Player) Collide(collision tl.Physical) {
 				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX-1, Y:p.preY, Direction: p.direction})
 			case LEFT:
 				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX+1, Y:p.preY, Direction: p.direction})
+			}
+		}else if _, pl := collision.(*tl.Rectangle); pl {
+			switch p.direction {
+			case UP:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
+			case DOWN:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
+			case RIGHT:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
+			case LEFT:
+				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
 			}
 		}
 	}

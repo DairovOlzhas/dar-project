@@ -2,6 +2,7 @@ package tank_game
 
 import (
 	tl "github.com/JoelOtter/termloop"
+	"log"
 )
 
 type Bullet struct {
@@ -46,3 +47,9 @@ func (b Bullet) Draw(screen *tl.Screen) {
 }
 
 func (b Bullet) Tick(event tl.Event) {}
+
+func (b *Bullet) Collide(collision tl.Physical) {
+	if _, ok := collision.(Player); ok {
+		log.Fatalln("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+	}
+}

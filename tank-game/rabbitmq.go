@@ -14,7 +14,6 @@ var (
 	checkOnlinePlayersQueue = "checkOnline"
 )
 
-
 func RabbitMQ() (err error){
 	conn, err = amqp.Dial(rabbitMQURL)
 	failOnError(err, "Failed to connect RabbitMQ", "Connected to RabbitMQ")

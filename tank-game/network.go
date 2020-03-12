@@ -39,7 +39,6 @@ const (
 	CHECK = 3
 )
 
-
 func getOnlinePlayers() {
 
 	msgs, err := ch.Consume(
@@ -99,22 +98,24 @@ func listenCommands() {
 		for d := range msgs {
 			a := Command{}
 			err = json.Unmarshal(d.Body, &a)
-			failOnError(err, "Failed to unmarshal command", "Command getted")
+			failOnError(err, "Failed to unmarshal command", "")
 
 			switch a.Action {
 			case TANK:
-				p := players[a.ID]
-				cell := tl.Cell{Bg: p.color}
-				p.SetPosition(a.X, a.Y)
-				switch a.Direction {
-				case UP:
-					TankUp(p.Tank, cell)
-				case DOWN:
-					TankDown(p.Tank, cell)
-				case LEFT:
-					TankLeft(p.Tank, cell)
-				case RIGHT:
-					TankRight(p.Tank, cell)
+				if _, ok := players[a.ID]; ok {
+					p := players[a.ID]
+					cell := tl.Cell{Bg: p.color}
+					p.SetPosition(a.X, a.Y)
+					switch a.Direction {
+					case UP:
+						TankUp(p.Tank, cell)
+					case DOWN:
+						TankDown(p.Tank, cell)
+					case LEFT:
+						TankLeft(p.Tank, cell)
+					case RIGHT:
+						TankRight(p.Tank, cell)
+					}
 				}
 			case BULLET:
 				b := NewBullet(a.X, a.Y, a.Direction)
@@ -155,6 +156,7 @@ func SendCommand(c Command){
 }
 
 func CheckOnlinePlayers(){
+
 	err := ch.Publish(
 		"",
 		checkOnlinePlayersQueue,
@@ -166,6 +168,7 @@ func CheckOnlinePlayers(){
 			ReplyTo:         receiverQueue.Name,
 		})
 	failOnError(err, "Failed to publish a massage", "Massage published")
+
 
 	msgs, err := ch.Consume(
 		checkOnlinePlayersQueue,
