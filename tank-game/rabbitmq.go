@@ -11,8 +11,8 @@ var (
 	onlinePlayersQueue = "onlinePlayers"
 	commandsExchange   = "commands"
 	receiverQueue      amqp.Queue
+	checkOnlinePlayersQueue = "checkOnline"
 )
-
 
 func RabbitMQ() (err error){
 	conn, err = amqp.Dial(rabbitMQURL)
@@ -44,8 +44,8 @@ func RabbitMQ() (err error){
 	receiverQueue, err = ch.QueueDeclare(
 		"",
 		false,
-		false,
 		true,
+		false,
 		false,
 		nil)
 	failOnError(err, "Failed to declare receiverQueue", "receiverQueue declared")
@@ -58,6 +58,15 @@ func RabbitMQ() (err error){
 		nil)
 	failOnError(err, "Failed to bind receiverQueue", "receiverQueue bound")
 
+	_, err = ch.QueueDeclare(
+		checkOnlinePlayersQueue,
+		false,
+		true,
+		false,
+		false,
+		nil,
+		)
+	failOnError(err, "Failed to declare checkOnlinePlayersQueue", "checkOnlinePlayersQueue declared")
 	return
 }
 

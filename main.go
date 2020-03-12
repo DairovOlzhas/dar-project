@@ -7,6 +7,11 @@ import (
 	"os"
 	"time"
 )
+
+var (
+	fps = 60
+)
+
 func failOnError(err error, msg string, ok string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
@@ -31,5 +36,6 @@ func main() {
 	failOnError(err, "Failed to configure RabbitMQ", "RabbitMQ configured")
 	defer tg.CloseConnectionAndChannel()
 
-	tg.StartGame()
+	g := tg.CreateGame(fps)
+	g.StartGame()
 }

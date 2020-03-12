@@ -10,6 +10,11 @@ type Tank struct {
 	color tl.Attr
 }
 
+var (
+	h = 8
+	w = 8
+)
+
 // Tank directions
 const (
 	UP    int = 1
@@ -30,10 +35,12 @@ func (tank *Tank) Draw(screen *tl.Screen) {
 
 	tank.Entity.Draw(screen)
 }
+func (tank *Tank) Tick(event tl.Event) {}
+
 
 func TankUpCanvas(tankBodyCell tl.Cell) tl.Canvas {
 
-	canvasUp := tl.NewCanvas(9, 9)
+	canvasUp := tl.NewCanvas(w, h)
 
 	// Tank canvas up
 	canvasUp[4][0] = tankBodyCell
@@ -81,7 +88,7 @@ func TankUpCanvas(tankBodyCell tl.Cell) tl.Canvas {
 
 func TankDownCanvas(tankBodyCell tl.Cell) tl.Canvas {
 
-	canvasDown := tl.NewCanvas(9, 9)
+	canvasDown := tl.NewCanvas(w, h)
 
 	// Tank canvas down
 	canvasDown[1][1] = tankBodyCell
@@ -117,7 +124,7 @@ func TankDownCanvas(tankBodyCell tl.Cell) tl.Canvas {
 	canvasDown[4][5] = tankBodyCell
 	canvasDown[4][6] = tankBodyCell
 	canvasDown[4][7] = tankBodyCell
-	canvasDown[4][8] = tankBodyCell
+	canvasDown[4][7] = tankBodyCell
 
 	canvasDown[3][3] = tankBodyCell
 	canvasDown[3][4] = tankBodyCell
@@ -129,7 +136,7 @@ func TankDownCanvas(tankBodyCell tl.Cell) tl.Canvas {
 
 func TankLeftCanvas(tankBodyCell tl.Cell) tl.Canvas {
 
-	canvasLeft := tl.NewCanvas(9, 9)
+	canvasLeft := tl.NewCanvas(w, h)
 
 	// Tank canvas left
 	canvasLeft[2][1] = tankBodyCell
@@ -177,7 +184,7 @@ func TankLeftCanvas(tankBodyCell tl.Cell) tl.Canvas {
 
 func TankRightCanvas(tankBodyCell tl.Cell) tl.Canvas {
 
-	canvasRight := tl.NewCanvas(9, 9)
+	canvasRight := tl.NewCanvas(w, h)
 
 	// Tank canvas right
 	canvasRight[2][1] = tankBodyCell
@@ -213,7 +220,7 @@ func TankRightCanvas(tankBodyCell tl.Cell) tl.Canvas {
 	canvasRight[4][4] = tankBodyCell
 	canvasRight[5][4] = tankBodyCell
 	canvasRight[6][4] = tankBodyCell
-	canvasRight[8][4] = tankBodyCell
+	canvasRight[7][4] = tankBodyCell
 
 	canvasRight[3][3] = tankBodyCell
 	canvasRight[4][3] = tankBodyCell
@@ -248,7 +255,7 @@ func NewTank(cell tl.Cell) *Tank {
 func NewTankXY(x, y int, cell tl.Cell, direction int) *Tank {
 
 	tank := Tank{
-		Entity: tl.NewEntity(x, y, 9, 9),
+		Entity: tl.NewEntity(x, y, w, h),
 	}
 	tank.color = cell.Bg
 	switch direction {
