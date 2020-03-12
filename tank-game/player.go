@@ -80,13 +80,13 @@ func (p *Player) Tick(event tl.Event) {
 
 			switch event.Key {
 			case tl.KeyArrowUp:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX, Y: p.preY - 1, Direction: UP})
+				SendCommand(Command{ID: p.ID, Action: MOVE, X: p.preX, Y: p.preY - 1, Direction: UP})
 			case tl.KeyArrowDown:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX, Y: p.preY + 1, Direction: DOWN})
+				SendCommand(Command{ID: p.ID, Action: MOVE, X: p.preX, Y: p.preY + 1, Direction: DOWN})
 			case tl.KeyArrowRight:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX + 1, Y: p.preY, Direction: RIGHT})
+				SendCommand(Command{ID: p.ID, Action: MOVE, X: p.preX + 1, Y: p.preY, Direction: RIGHT})
 			case tl.KeyArrowLeft:
-				SendCommand(Command{ID: p.ID, Action: TANK, X: p.preX - 1, Y: p.preY, Direction: LEFT})
+				SendCommand(Command{ID: p.ID, Action: MOVE, X: p.preX - 1, Y: p.preY, Direction: LEFT})
 			case tl.KeySpace:
 				switch bulletDirection {
 				case UP:
@@ -150,24 +150,24 @@ func (p *Player) Collide(collision tl.Physical) {
 		}else if _, pl := collision.(*Player); pl {
 			switch p.direction {
 			case UP:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY+1, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX, Y:p.preY+1, Direction: p.direction})
 			case DOWN:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY-1, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX, Y:p.preY-1, Direction: p.direction})
 			case RIGHT:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX-1, Y:p.preY, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX-1, Y:p.preY, Direction: p.direction})
 			case LEFT:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX+1, Y:p.preY, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX+1, Y:p.preY, Direction: p.direction})
 			}
 		}else if _, pl := collision.(*tl.Rectangle); pl {
 			switch p.direction {
 			case UP:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX, Y:p.preY, Direction: p.direction})
 			case DOWN:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX, Y:p.preY, Direction: p.direction})
 			case RIGHT:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX, Y:p.preY, Direction: p.direction})
 			case LEFT:
-				SendCommand(Command{ID:p.ID, Action:TANK, X: p.preX, Y:p.preY, Direction: p.direction})
+				SendCommand(Command{ID:p.ID, Action: MOVE, X: p.preX, Y:p.preY, Direction: p.direction})
 			}
 		}
 	}

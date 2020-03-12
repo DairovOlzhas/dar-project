@@ -12,13 +12,20 @@ var (
 
 type GameClass struct {
 	*tl.Game
-	fps int
+	fps 			int
+
+	players         map[string] *Player
+	playerToDelete  map[string] bool
+	CurrentPlayerID string
 }
 
 func CreateGame(fps int) *GameClass {
 	return &GameClass{
-		Game: tl.NewGame(),
-		fps:  fps,
+		Game: 			tl.NewGame(),
+		fps:  			fps,
+		players: 		make(map[string] *Player),
+		playerToDelete:	make(map[string] bool),
+		CurrentPlayerID:"",
 	}
 }
 
@@ -44,7 +51,7 @@ func (g *GameClass) StartGame() {
 	//CheckOnlinePlayers()
 	//  Menu
 
-	StartMenu()
+	startMenu()
 	g.Start()
 	//  Run
 

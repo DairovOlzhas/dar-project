@@ -33,10 +33,10 @@ type Command struct {
 }
 // command action
 const (
-	TANK = 0
+	MOVE   = 0
 	BULLET = 1
 	DELETE = 2
-	CHECK = 3
+	CHECK  = 3
 )
 
 func getOnlinePlayers() {
@@ -101,7 +101,7 @@ func listenCommands() {
 			failOnError(err, "Failed to unmarshal command", "")
 
 			switch a.Action {
-			case TANK:
+			case MOVE:
 				if _, ok := players[a.ID]; ok {
 					p := players[a.ID]
 					cell := tl.Cell{Bg: p.color}

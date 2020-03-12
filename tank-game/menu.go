@@ -90,7 +90,7 @@ func CreateMenu(arg_items []string) int {
 	return menu.index
 }
 
-func StartMenu(){
+func startMenu(){
 
 	items := make([]string,3)
 	items[0] = "Start Game"
