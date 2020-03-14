@@ -1,9 +1,6 @@
 package main
 
-import (
-	"github.com/streadway/amqp"
-	"os"
-)
+import "fmt"
 
 var (
 	mp map[string]*class
@@ -21,17 +18,14 @@ type response1 struct {
 	Fruits []string
 }
 
+func incr(n *int)  {
+	(*n)++
+}
+
 func main() {
 
-	_ = ch.Publish(
-		"",
-		"asdf",
-		false,
-		false,
-		amqp.Publishing{
-			CorrelationId:   "asdf",
-			ReplyTo:         "asdfasdf",
-			Body:            []byte(os.Args[1]),
-		},
-	)
+	var n int
+	n = 5
+	incr(&n)
+	fmt.Println(n)
 }

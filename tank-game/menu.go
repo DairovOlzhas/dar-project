@@ -54,7 +54,7 @@ func (m *Menu) Tick(ev tl.Event) {
 				}
 				Menuhidden = true
 			case EXIT:
-				Game.Stop()
+				Game().Stop()
 			}
 		default:
 			log.Println(ev)

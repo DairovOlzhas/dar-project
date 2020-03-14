@@ -78,15 +78,18 @@ func CloseConnectionAndChannel() (err error){
 	return
 }
 
+func Channel() *amqp.Channel{
+	return ch
+}
 func OnlinePlayersQueueName() string {
 	return onlinePlayersQueue
 }
 func CommandsExchangeName() string {
 	return commandsExchange
 }
-func Channel() *amqp.Channel{
-	return ch
+func ReceiverQueue() amqp.Queue {
+	return receiverQueue
 }
-func ReceiverQueueName() string{
-	return receiverQueue.Name
+func CheckOnlinePlayersQueue() string {
+	return checkOnlinePlayersQueue
 }

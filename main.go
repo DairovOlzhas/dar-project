@@ -36,6 +36,7 @@ func main() {
 	failOnError(err, "Failed to configure RabbitMQ", "RabbitMQ configured")
 	defer tg.CloseConnectionAndChannel()
 
-	g := tg.CreateGame(fps)
-	g.StartGame()
+	tg.CreateGame(fps)
+	tg.StartGame()
+
 }
