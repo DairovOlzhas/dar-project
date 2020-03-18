@@ -1,4 +1,4 @@
-package tank_game
+package game
 
 import (
 	tl "github.com/JoelOtter/termloop"
@@ -15,7 +15,6 @@ var (
 	w = 8
 )
 
-// Tank directions
 const (
 	UP    int = 1
 	DOWN  int = 2
@@ -23,18 +22,12 @@ const (
 	RIGHT int = 4
 )
 
-//var (
-//	canvasUp     tl.Canvas
-//	canvasRight  tl.Canvas
-//	canvasDown   tl.Canvas
-//	canvasLeft   tl.Canvas
-//	tankBodyCell tl.Cell
-//)
 
 func (tank *Tank) Draw(screen *tl.Screen) {
 
 	tank.Entity.Draw(screen)
 }
+
 func (tank *Tank) Tick(event tl.Event) {}
 
 

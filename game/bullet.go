@@ -1,8 +1,7 @@
-package tank_game
+package game
 
 import (
 	tl "github.com/JoelOtter/termloop"
-	"log"
 )
 
 type Bullet struct {
@@ -23,7 +22,7 @@ func NewBullet(x, y, d int) Bullet {
 func (b Bullet) Draw(screen *tl.Screen) {
 
 	bX, bY := b.Position()
-	screenX, screenY := screen.Size()
+	screenX, screenY := Game().Size()
 
 	if bX > screenX || bX < 0 || bY > screenY || bY < 0 {
 		screen.RemoveEntity(b)
@@ -48,8 +47,3 @@ func (b Bullet) Draw(screen *tl.Screen) {
 
 func (b Bullet) Tick(event tl.Event) {}
 
-func (b *Bullet) Collide(collision tl.Physical) {
-	if _, ok := collision.(Player); ok {
-		log.Fatalln("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-	}
-}
