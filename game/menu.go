@@ -38,11 +38,11 @@ func (m *menu) Tick(ev tl.Event) {
 				Menuhidden = false
 				m.index = 0
 			case tl.KeyArrowUp:
-				if m.index > 0 {
+				if m.index > 0 && !Menuhidden{
 					m.index -= 1
 				}
 			case tl.KeyArrowDown:
-				if m.index < len(m.items)-1 {
+				if m.index < len(m.items)-1 && !Menuhidden{
 					m.index += 1
 				}
 			case tl.KeyEnter:

@@ -144,3 +144,71 @@
 2020/03/19 17:32:10 
 2020/03/19 17:32:12  [*] Channel closed
 2020/03/19 17:32:13  [*] Channel closed
+2020/03/19 17:41:46  [*] Connected to RabbitMQ
+2020/03/19 17:41:46  [*] Channel opened
+2020/03/19 17:41:46  [*] commands exchange declared
+2020/03/19 17:41:46  [*] onlinePlayers queue declared
+2020/03/19 17:41:46  [*] amq.gen-AI4QrJCJbkSdb9EhdOS2uw queue declared
+2020/03/19 17:41:46  [*] amq.gen-AI4QrJCJbkSdb9EhdOS2uw queue binded to commands exchange
+2020/03/19 17:41:46  [*] checkOnline queue declared
+2020/03/19 17:41:46 
+2020/03/19 17:41:49  [*] Connected to RabbitMQ
+2020/03/19 17:41:49  [*] Channel opened
+2020/03/19 17:41:49  [*] commands exchange declared
+2020/03/19 17:41:49  [*] onlinePlayers queue declared
+2020/03/19 17:41:49  [*] amq.gen-jw2H6-vISqf0jfcPqACJtQ queue declared
+2020/03/19 17:41:49  [*] amq.gen-jw2H6-vISqf0jfcPqACJtQ queue binded to commands exchange
+2020/03/19 17:41:49  [*] checkOnline queue declared
+2020/03/19 17:41:49 
+2020/03/19 17:41:49  [*] amq.gen-Au05atP9CFh_EXdpqxQq2A queue declared
+2020/03/19 17:41:49 warning WLLOLMDABQQHPFFEVWQMIEQTQPNXGTAH
+2020/03/19 17:41:49 warning WLLOLMDABQQHPFFEVWQMIEQTQPNXGTAH
+2020/03/19 17:41:49 warning WLLOLMDABQQHPFFEVWQMIEQTQPNXGTAH
+2020/03/19 17:42:11 info delete received 
+2020/03/19 17:42:11 info delete received 
+2020/03/19 17:42:26 info delete received 
+2020/03/19 17:42:26 info delete received 
+2020/03/19 17:42:51  [*] Channel closed
+2020/03/19 17:42:51  [*] amq.gen--Hi14ygSa9iLLKg9isFZDQ queue declared
+2020/03/19 17:42:51  [*] amq.gen-LgkkTwBY5Azwif8GFmyAaA queue declared
+2020/03/19 17:42:51 info delete received 
+2020/03/19 17:42:58  [*] Connected to RabbitMQ
+2020/03/19 17:42:58  [*] Channel opened
+2020/03/19 17:42:58  [*] commands exchange declared
+2020/03/19 17:42:58  [*] onlinePlayers queue declared
+2020/03/19 17:42:58  [*] amq.gen-c0BdDtqtS6BPjBdS-mO0VQ queue declared
+2020/03/19 17:42:58  [*] amq.gen-c0BdDtqtS6BPjBdS-mO0VQ queue binded to commands exchange
+2020/03/19 17:42:58  [*] checkOnline queue declared
+2020/03/19 17:42:58 
+2020/03/19 17:42:59  [*] amq.gen-292EiTVim_9Df7zw_n3FLQ queue declared
+2020/03/19 17:42:59 warning TYRPSQEBXVYIPUCULMIFFOJKORDUWFYK
+2020/03/19 17:42:59 warning TYRPSQEBXVYIPUCULMIFFOJKORDUWFYK
+2020/03/19 17:42:59 warning TYRPSQEBXVYIPUCULMIFFOJKORDUWFYK
+2020/03/19 17:43:04  [*] Channel closed
+2020/03/19 17:43:04  [*] amq.gen-EzPNg544F04aZWOq7t5QNg queue declared
+2020/03/19 17:43:05 info delete received 
+2020/03/19 17:45:15  [*] Channel closed
+2020/03/19 17:46:08  [*] Connected to RabbitMQ
+2020/03/19 17:46:08  [*] Channel opened
+2020/03/19 17:46:08  [*] commands exchange declared
+2020/03/19 17:46:08  [*] onlinePlayers queue declared
+2020/03/19 17:46:08  [*] amq.gen-HYmRsWwWx2koOwMmssGjHA queue declared
+2020/03/19 17:46:08  [*] amq.gen-HYmRsWwWx2koOwMmssGjHA queue binded to commands exchange
+2020/03/19 17:46:08  [*] checkOnline queue declared
+2020/03/19 17:46:08 
+2020/03/19 17:46:10  [*] Connected to RabbitMQ
+2020/03/19 17:46:10  [*] Channel opened
+2020/03/19 17:46:10  [*] commands exchange declared
+2020/03/19 17:46:10  [*] onlinePlayers queue declared
+2020/03/19 17:46:10  [*] amq.gen-Z6oT2sFn4__QJuoGe1IOIg queue declared
+2020/03/19 17:46:10  [*] amq.gen-Z6oT2sFn4__QJuoGe1IOIg queue binded to commands exchange
+2020/03/19 17:46:10  [*] checkOnline queue declared
+2020/03/19 17:46:10 
+2020/03/19 17:46:10  [*] amq.gen-7XopWh_W2Zw-pTwV677NkQ queue declared
+2020/03/19 17:46:10 warning KRFJRURMTTBHOTTDAPKBAINVNPXUWILR
+2020/03/19 17:46:10 warning KRFJRURMTTBHOTTDAPKBAINVNPXUWILR
+2020/03/19 17:46:10 warning KRFJRURMTTBHOTTDAPKBAINVNPXUWILR
+2020/03/19 17:46:19  [*] Channel closed
+2020/03/19 17:46:19  [*] amq.gen-0vSwzEMsr8k3VkM1DIW_Hg queue declared
+2020/03/19 17:46:19 info delete received 
+2020/03/19 17:46:20  [*] Channel closed

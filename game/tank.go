@@ -2,6 +2,7 @@ package game
 
 import (
 	tl "github.com/JoelOtter/termloop"
+	"strings"
 )
 
 type Tank struct {
@@ -232,18 +233,18 @@ func TankRightCanvas(tankBodyCell tl.Cell) tl.Canvas {
 		"  ████████\n"+
 		"  ████    \n"+
 		"████████  "
-	canvasRight := tl.CanvasFromString(canv)
+	//canvasRight := tl.CanvasFromString(canv)
 
 
-	//lines := strings.Split(canv, "\n")
-	//canvasRight := tl.NewCanvas(w,h)
-	//for i:=0; i<h; i++{
-	//	for j:=0; j<w; j++{
-	//		if rune(lines[i][j]) == '█' {
-	//			canvasRight[i][j] = tankBodyCell
-	//		}
-	//	}
-	//}
+	lines := strings.Split(canv, "\n")
+	canvasRight := tl.NewCanvas(w,h)
+	for i:=0; i<h; i++{
+		for j:=0; j<w; j++{
+			if rune(lines[i][j]) == '█' {
+				canvasRight[i][j] = tankBodyCell
+			}
+		}
+	}
 
 
 
