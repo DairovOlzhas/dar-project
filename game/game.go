@@ -156,7 +156,12 @@ func (g *gameClass) listenCommands() {
 			case TANK:
 				if _, ok := g.onlinePlayers[a.ID]; ok {
 					p := g.onlinePlayers[a.ID]
-					cell := tl.Cell{Bg: p.color}
+
+					cell := tl.Cell{Bg: a.Color}
+					p.Username = a.Username
+					p.Score = a.Score
+					p.HP = a.HP
+					p.preX, p.preY = p.Position()
 					p.SetPosition(a.X, a.Y)
 					switch a.Direction {
 					case UP:
@@ -181,11 +186,6 @@ func (g *gameClass) listenCommands() {
 				if a.ID == g.currentPlayerID {
 					Publisher("", d.ReplyTo, amqp.Publishing{})
 				}
-			case NAME:
-				if _, ok := g.onlinePlayers[a.ID]; ok {
-					g.onlinePlayers[a.ID].Username.SetText(a.Username)
-					g.onlinePlayers[a.ID].color = a.Color
-				}
 			}
 
 			d.Ack(false)
@@ -200,7 +200,6 @@ const (
 	BULLET = 1
 	DELETE = 2
 	CHECK = 3
-	NAME = 4
 ) // command action
 
 type Command struct {
@@ -214,6 +213,15 @@ type Command struct {
 
 func (c Command) Send(){
 
+
+	if c.Action == TANK {
+		p := Game().onlinePlayers[Game().currentPlayerID]
+		c.HP = p.HP
+		c.Score = p.Score
+		c.Username = p.Username
+		c.Color = p.color
+	}
+
 	body, _ := json.Marshal(c)
 
 	msg := amqp.Publishing{
@@ -221,23 +229,8 @@ func (c Command) Send(){
 		Body:            body,
 	}
 
-	switch c.Action {
-	case CHECK:
+	if c.Action == CHECK {
 		msg.ReplyTo = c.ReplyTo
-	case DELETE:
-		//TODO
-	case TANK:
-		//TODO
-	case BULLET:
-		//TODO
-	case NAME:
-		c.Username = Game().onlinePlayers[Game().currentPlayerID].Username.Text()
-		c.Color = Game().onlinePlayers[Game().currentPlayerID].color
-		body, _ = json.Marshal(c)
-		msg = amqp.Publishing{
-			ContentType:     "application/json",
-			Body:            body,
-		}
 	}
 
 	Publisher(CommandsExchange(),"", msg)

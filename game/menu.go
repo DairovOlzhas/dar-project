@@ -3,16 +3,15 @@ package game
 import (
 	"fmt"
 	tl "github.com/JoelOtter/termloop"
-	"log"
 )
 
 var (
-	Menuhidden = false
-	NameChanging = false
+	Menuhidden   = false
+	nameChanging = false
 	new_username = ""
 )
 
-type Menu struct {
+type menu struct {
 	items []*tl.Text
 	index int
 }
@@ -23,7 +22,7 @@ const (
 	EXIT 		=	2
 )
 
-func (m *Menu) Tick(ev tl.Event) {
+func (m *menu) Tick(ev tl.Event) {
 	if _, prs := Game().onlinePlayers[Game().currentPlayerID]; !prs {
 		m.items[0].SetText("Start game")
 		Menuhidden = false
@@ -31,10 +30,9 @@ func (m *Menu) Tick(ev tl.Event) {
 		m.items[0].SetText("Resume")
 	}
 	if ev.Type == tl.EventKey {
-		if !NameChanging {
+		if !nameChanging {
 			switch ev.Key {
 			case tl.Key(127):
-				//log.Println(ev.Ch)
 				Menuhidden = false
 				m.index = 0
 			case tl.KeyArrowUp:
@@ -50,29 +48,26 @@ func (m *Menu) Tick(ev tl.Event) {
 				case START_OR_RESUME_GAME:
 					if _, prs := Game().onlinePlayers[Game().currentPlayerID]; !prs {
 						NewPlayer()
-						//CheckOnlinePlayers()
 					}
 					Menuhidden = true
 				case CHANGENAME:
-					NameChanging = true
+					nameChanging = true
 					new_username = ""
 				case EXIT:
 					Game().Stop()
 				}
-			default:
-				log.Println(ev)
 			}
 		} else {
 			switch ev.Key {
 			case tl.Key(127):
-				NameChanging = false
+				nameChanging = false
 			case tl.Key(65522):
-				if len(new_username) > 1 {
+				if len(new_username) > 0 {
 					new_username = new_username[0:len(new_username)-1]
 				}
 			case tl.KeyEnter:
-				Game().onlinePlayers[Game().currentPlayerID].Username.SetText(new_username)
-				NameChanging = false
+				Game().onlinePlayers[Game().currentPlayerID].Username = new_username
+				nameChanging = false
 			default:
 				if ((ev.Ch >= 'a' && ev.Ch <= 'z' )|| (ev.Ch >= 'A' && ev.Ch <= 'Z')) && len(new_username) < 10{
 					new_username = new_username + string(ev.Ch)
@@ -81,20 +76,22 @@ func (m *Menu) Tick(ev tl.Event) {
 		}
 	}
 }
-func (m *Menu) Draw(s *tl.Screen) {
+func (m *menu) Draw(s *tl.Screen) {
 	if !Menuhidden {
 		Game().Level().SetOffset(0,0)
 		sx, sy := s.Size()
-		//dx, dy := Level.Offset()
-		if NameChanging {
+		if nameChanging {
+
 			text := tl.NewText(0,0, "Enter username(at most 10 chars):", tl.ColorBlack, tl.ColorWhite)
 			ix, iy := text.Size()
 			text.SetPosition(sx/2-ix/2, sy/2-iy/2)
+			text.Draw(s)
+
 			username := tl.NewText(0,0, new_username, tl.ColorBlack, tl.ColorWhite)
 			ix, iy = username.Size()
 			username.SetPosition(sx/2-ix/2, sy/2-iy/2+1)
-			text.Draw(s)
 			username.Draw(s)
+
 		} else {
 			for i,_ := range m.items {
 				if i == m.index {
@@ -113,7 +110,7 @@ func (m *Menu) Draw(s *tl.Screen) {
 
 func CreateMenu(arg_items []string) int {
 
-	menu := Menu{
+	menu := menu{
 		items:    make([]*tl.Text, len(arg_items)),
 		index: 	  0,
 	}
