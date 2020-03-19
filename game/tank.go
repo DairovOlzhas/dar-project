@@ -40,6 +40,16 @@ func TankUpCanvas(tankBodyCell tl.Cell) tl.Canvas {
 	"██      ██\n"
 	canvasUp := tl.CanvasFromString(canv)
 
+	//lines := strings.Split(canv, "\n")
+	//canvasUp := tl.NewCanvas(w,h)
+	//for i:=0; i<h; i++{
+	//	for j:=0; j<w; j++{
+	//		if rune(lines[i][j]) == '█' {
+	//			canvasUp[j][i] = tankBodyCell
+	//		}
+	//	}
+	//}
+
 	// Tank canvas up
 	//canvasUp[4][0] = tankBodyCell
 	//canvasUp[4][1] = tankBodyCell
@@ -91,6 +101,15 @@ func TankDownCanvas(tankBodyCell tl.Cell) tl.Canvas {
 			"██  ██  ██\n"+
 			"    ██    "
 	canvasDown := tl.CanvasFromString(canv)
+	//lines := strings.Split(canv, "\n")
+	//canvasDown := tl.NewCanvas(w,h)
+	//for i:=0; i<h; i++{
+	//	for j:=0; j<w; j++{
+	//		if rune(lines[i][j]) == '█' {
+	//			canvasDown[i][j] = tankBodyCell
+	//		}
+	//	}
+	//}
 
 
 	//canvasDown := tl.NewCanvas(w, h)
@@ -147,7 +166,18 @@ func TankLeftCanvas(tankBodyCell tl.Cell) tl.Canvas {
 		"████████  \n"+
 		"    ████  \n"+
 		"  ████████"
+
 	canvasLeft := tl.CanvasFromString(canv)
+
+	//lines := strings.Split(canv, "\n")
+	//canvasLeft := tl.NewCanvas(w,h)
+	//for i:=0; i<h; i++{
+	//	for j:=0; j<w; j++{
+	//		if rune(lines[i][j]) == '█' {
+	//			canvasLeft[i][j] = tankBodyCell
+	//		}
+	//	}
+	//}
 
 
 	// Tank canvas left
@@ -203,6 +233,17 @@ func TankRightCanvas(tankBodyCell tl.Cell) tl.Canvas {
 		"  ████    \n"+
 		"████████  "
 	canvasRight := tl.CanvasFromString(canv)
+
+
+	//lines := strings.Split(canv, "\n")
+	//canvasRight := tl.NewCanvas(w,h)
+	//for i:=0; i<h; i++{
+	//	for j:=0; j<w; j++{
+	//		if rune(lines[i][j]) == '█' {
+	//			canvasRight[i][j] = tankBodyCell
+	//		}
+	//	}
+	//}
 
 
 

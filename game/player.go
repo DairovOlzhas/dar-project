@@ -102,10 +102,10 @@ func (p *player) Tick(event tl.Event) {
 					bulletY = p.preY + 10
 				case LEFT:
 					bulletX = p.preX - 1
-					bulletY = p.preY + 4
+					bulletY = p.preY + 2
 				case RIGHT:
 					bulletX = p.preX + 10
-					bulletY = p.preY + 4
+					bulletY = p.preY + 2
 				}
 				command.Action = BULLET
 				command.X = bulletX
@@ -153,7 +153,7 @@ func (p *player) Draw(screen *tl.Screen) {
 func (p *player) Collide(collision tl.Physical) {
 	if p.ID == Game().currentPlayerID {
 		if _, ok := collision.(Bullet); ok {
-			Command{ID: p.ID, Action: DELETE,}.Send()
+			//Command{ID: p.ID, Action: DELETE,}.Send()
 		}else if _, pl := collision.(*player); pl {
 			//preX, preY := p.Position()
 			switch p.direction {

@@ -153,6 +153,19 @@ func (g *gameClass) listenCommands() {
 			failOnError(err, "Failed to unmarshal command", "")
 
 			switch a.Action {
+			case KILL:
+				if _, ok := g.onlinePlayers[a.ID]; ok {
+					g.onlinePlayers[a.ID].HP += 5
+					g.onlinePlayers[a.ID].Score += 1
+				}
+			case HITTED:
+				if _, ok := g.onlinePlayers[a.ID]; ok {
+					g.onlinePlayers[a.ID].HP += 5
+				}
+			case ATTACKED:
+				if _, ok := g.onlinePlayers[a.ID]; ok {
+					g.onlinePlayers[a.ID].HP -= 5
+				}
 			case TANK:
 				if _, ok := g.onlinePlayers[a.ID]; ok {
 					p := g.onlinePlayers[a.ID]
@@ -175,13 +188,15 @@ func (g *gameClass) listenCommands() {
 					}
 				}
 			case BULLET:
-				b := NewBullet(a.X, a.Y, a.Direction)
+				b := NewBullet(a.X, a.Y, a.Direction, a.ID)
 				g.level.AddEntity(b)
 			case DELETE:
-				log.Println("info delete received "+d.CorrelationId)
-				playersToDelete[a.ID] = true
-				g.level.RemoveEntity(g.onlinePlayers[a.ID])
-				delete(g.onlinePlayers, a.ID)
+				if _, ok := g.onlinePlayers[a.ID]; ok {
+					log.Println("info delete received "+d.CorrelationId)
+					playersToDelete[a.ID] = true
+					g.level.RemoveEntity(g.onlinePlayers[a.ID])
+					delete(g.onlinePlayers, a.ID)
+				}
 			case CHECK:
 				if a.ID == g.currentPlayerID {
 					Publisher("", d.ReplyTo, amqp.Publishing{})
@@ -200,6 +215,9 @@ const (
 	BULLET = 1
 	DELETE = 2
 	CHECK = 3
+	HITTED = 4
+	ATTACKED = 5
+	KILL = 6
 ) // command action
 
 type Command struct {

@@ -3,6 +3,8 @@ package game
 import (
 	"fmt"
 	tl "github.com/JoelOtter/termloop"
+	"math"
+	"sort"
 )
 
 var (
@@ -77,6 +79,8 @@ func (m *menu) Tick(ev tl.Event) {
 	}
 }
 func (m *menu) Draw(s *tl.Screen) {
+
+
 	if !Menuhidden {
 		Game().Level().SetOffset(0,0)
 		sx, sy := s.Size()
@@ -105,6 +109,38 @@ func (m *menu) Draw(s *tl.Screen) {
 				m.items[i].Draw(s)
 			}
 		}
+	} else {
+		top := []struct{
+			score int
+			hp int
+			username string
+		}{}
+		for _, p := range Game().onlinePlayers {
+			top = append(top, struct {
+				score    int
+				hp       int
+				username string
+			}{score: p.Score, hp: p.HP, username: p.Username})
+		}
+		sort.SliceStable(top, func(i, j int) bool {
+			if top[i].score > top[j].score {
+				return true
+			}else if top[i].score < top[j].score{
+				return false
+			}else{
+				return top[i].hp > top[j].hp
+			}
+		})
+		x,y := Game().Level().Offset()
+		x,y = -x,-y
+		//log.Println("Position",x,y)
+		tl.NewText(x+1, y, "       TOP 5       ", tl.ColorBlack, tl.ColorWhite).Draw(s)
+		tl.NewText(x+1, y+1, "# Score HP  Username", tl.ColorBlack, tl.ColorWhite).Draw(s)
+
+		for i:=0; i < int(math.Min(float64(len(top)), 5.0)) ; i++{
+			tl.NewText(x+1, y+2+i, fmt.Sprintf("%-2d%-5d %-3d %s",i+1, top[i].score, top[i].hp, top[i].username), tl.ColorBlack, tl.ColorWhite).Draw(s)
+		}
+
 	}
 }
 
@@ -125,10 +161,7 @@ func CreateMenu(arg_items []string) int {
 }
 func StartMenu(){
 
-	items := make([]string,3)
-	items[0] = "Start Game"
-	items[1] = "Set Name"
-	items[2] = "Exit"
+	items := []string{"Start Game", "Set Name", "Exit"}
 
 	fmt.Println("selected item: "+items[CreateMenu(items)])
 

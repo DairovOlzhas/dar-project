@@ -7,12 +7,14 @@ import (
 type Bullet struct {
 	*tl.Entity
 	direction int
+	owner string
 }
 
-func NewBullet(x, y, d int) Bullet {
+func NewBullet(x, y, d int, owner string) Bullet {
 	b := Bullet{
 		Entity:    tl.NewEntity(x, y, 1, 1),
 		direction: d,
+		owner: 		owner,
 	}
 	b.SetCell(0, 0, &tl.Cell{Fg: tl.ColorBlack, Bg: tl.ColorBlack})
 
@@ -45,5 +47,30 @@ func (b Bullet) Draw(screen *tl.Screen) {
 
 }
 
-func (b Bullet) Tick(event tl.Event) {}
+func (b Bullet) Tick(event tl.Event) {
+	if b.owner == Game().currentPlayerID {
+		for id, p := range Game().onlinePlayers {
+			if id != Game().currentPlayerID {
+
+				px, py := p.Position()
+				pw, ph := p.Size()
+
+				bx, by := b.Position()
+				bw, bh := b.Size()
+
+				if px < bx+bw && px+pw > bx &&
+					py < by+bh && py+ph > by {
+					if p.HP > 5 {
+						Command{ID: id, Action: ATTACKED}.Send()
+						Command{ID: b.owner, Action:HITTED}.Send()
+					}else{
+						Command{ID: p.ID, Action: DELETE}.Send()
+						Command{ID: b.owner, Action:KILL}.Send()
+					}
+					Game().Level().RemoveEntity(b)
+				}
+			}
+		}
+	}
+}
 
