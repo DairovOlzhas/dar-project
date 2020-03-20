@@ -43,12 +43,17 @@ func NewPlayer() *player{
 			randInt(0,gX-9),
 			randInt(0, gY-9),
 			tl.Cell{Bg:tl.RgbTo256Color(randInt(0,255), randInt(0,255),randInt(0,255))},
-			UP,
+			randInt(1,4),
 			),
 		ID:       genRandString(32),
-		Username: genRandString(10),
+		Username: "Player_NO_NAME_"+strconv.Itoa(len(Game().onlinePlayers)),
 		Score:    0,
 		HP: 	  100,
+	}
+	SetUsername(player.Username)
+	for player.CollideWorker(player.direction) {
+		player.direction = randInt(1,4)
+		player.SetPosition(	randInt(0,gX-9), randInt(0, gY-9))
 	}
 
 	Game().onlinePlayers[player.ID] = player
@@ -65,7 +70,6 @@ func NewPlayer() *player{
 			ReplyTo:       ReceiverQueue(),
 		})
 
-
 	return player
 }
 
@@ -78,16 +82,36 @@ func (p *player) Tick(event tl.Event) {
 
 			switch event.Key {
 			case tl.KeyArrowUp:
-				command.Y -= 1
+				if p.direction == UP {
+					command.Y -= 1
+					if p.CollideWorker(UP) {
+						return
+					}
+				}
 				command.Direction = UP
 			case tl.KeyArrowDown:
-				command.Y += 1
+				if p.direction == DOWN {
+					command.Y += 1
+					if p.CollideWorker(DOWN) {
+						return
+					}
+				}
 				command.Direction = DOWN
 			case tl.KeyArrowRight:
-				command.X += 1
+				if p.direction == RIGHT {
+					command.X += 2
+					if p.CollideWorker(RIGHT) {
+						return
+					}
+				}
 				command.Direction = RIGHT
 			case tl.KeyArrowLeft:
-				command.X -= 1
+				if p.direction == LEFT {
+					command.X -= 2
+					if p.CollideWorker(LEFT) {
+						return
+					}
+				}
 				command.Direction = LEFT
 			case tl.KeySpace:
 				var bulletX, bulletY, bulletDirection  int
@@ -99,7 +123,7 @@ func (p *player) Tick(event tl.Event) {
 					bulletY = p.preY - 1
 				case DOWN:
 					bulletX = p.preX + 4
-					bulletY = p.preY + 10
+					bulletY = p.preY + 6
 				case LEFT:
 					bulletX = p.preX - 1
 					bulletY = p.preY + 2
@@ -136,10 +160,6 @@ func (p *player) Draw(screen *tl.Screen) {
 		p.SetPosition(tX, tY-1)
 		//p.SetPosition(tX, 0)
 	}
-	if p.ID == Game().currentPlayerID && Menuhidden {
-		sX, sY := screen.Size()
-		Game().Level().SetOffset(sX/2-tX-5, sY/2-tY-5)
-	}
 
 	if Menuhidden {
 		x,y := p.Position()
@@ -150,24 +170,44 @@ func (p *player) Draw(screen *tl.Screen) {
 	}
 }
 
-func (p *player) Collide(collision tl.Physical) {
+func (p *player) CollideWorker(direction int) bool {
 	if p.ID == Game().currentPlayerID {
-		if _, ok := collision.(Bullet); ok {
-			//Command{ID: p.ID, Action: DELETE,}.Send()
-		}else if _, pl := collision.(*player); pl {
-			//preX, preY := p.Position()
-			switch p.direction {
-			case UP:
-				Command{ID: p.ID, Action: TANK, X: p.preX, Y:p.preY-1, Direction: p.direction}.Send()
-			case DOWN:
-				Command{ID: p.ID, Action: TANK, X: p.preX, Y:p.preY+1, Direction: p.direction}.Send()
-			case RIGHT:
-				Command{ID: p.ID, Action: TANK, X: p.preX-1, Y:p.preY, Direction: p.direction}.Send()
-			case LEFT:
-				Command{ID: p.ID, Action: TANK, X: p.preX+1, Y:p.preY, Direction: p.direction}.Send()
+		for _, c := range Game().onlinePlayers {
+			if c.ID != p.ID && collided(p, c, direction) {
+				return true
+			}
+		}
+		for _, c := range Game().walls {
+			if collided(p, c, direction) {
+				return true
 			}
 		}
 	}
+	return false
+}
+
+func collided(p tl.Physical, c tl.Physical, direction int) bool {
+	px, py := p.Position()
+	cx, cy := c.Position()
+	pw, ph := p.Size()
+	cw, ch := c.Size()
+
+	switch direction {
+	case UP:
+		py -= 1
+	case DOWN:
+		py += 1
+	case LEFT:
+		px -= 2
+	case RIGHT:
+		px += 2
+	}
+
+	if px < cx+cw && px+pw > cx &&
+		py < cy+ch && py+ph > cy {
+		return true
+	}
+	return false
 }
 
 

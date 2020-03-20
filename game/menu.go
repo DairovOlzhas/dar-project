@@ -24,6 +24,14 @@ const (
 	EXIT 		=	2
 )
 
+func Username() string {
+	return new_username
+}
+
+func SetUsername(username string) {
+	new_username = username
+}
+
 func (m *menu) Tick(ev tl.Event) {
 	if _, prs := Game().onlinePlayers[Game().currentPlayerID]; !prs {
 		m.items[0].SetText("Start game")
@@ -68,10 +76,10 @@ func (m *menu) Tick(ev tl.Event) {
 					new_username = new_username[0:len(new_username)-1]
 				}
 			case tl.KeyEnter:
-				Game().onlinePlayers[Game().currentPlayerID].Username = new_username
 				nameChanging = false
 			default:
-				if ((ev.Ch >= 'a' && ev.Ch <= 'z' )|| (ev.Ch >= 'A' && ev.Ch <= 'Z')) && len(new_username) < 10{
+				if ((ev.Ch >= 'a' && ev.Ch <= 'z' )|| (ev.Ch >= 'A' && ev.Ch <= 'Z') ||
+					(ev.Ch >= 'а' && ev.Ch <= 'я' )|| (ev.Ch >= 'А' && ev.Ch <= 'Я') ) && len(new_username) < 10{
 					new_username = new_username + string(ev.Ch)
 				}
 			}
@@ -111,34 +119,44 @@ func (m *menu) Draw(s *tl.Screen) {
 		}
 	} else {
 		top := []struct{
+			id string
 			score int
 			hp int
 			username string
 		}{}
 		for _, p := range Game().onlinePlayers {
 			top = append(top, struct {
+				id string
 				score    int
 				hp       int
 				username string
-			}{score: p.Score, hp: p.HP, username: p.Username})
+			}{id: p.ID,score: p.Score, hp: p.HP, username: p.Username})
 		}
-		sort.SliceStable(top, func(i, j int) bool {
+		sort.Slice(top, func(i, j int) bool {
 			if top[i].score > top[j].score {
 				return true
-			}else if top[i].score < top[j].score{
+			}else if top[i].score < top[j].score {
+				return false
+			}else if top[i].hp > top[j].hp {
+				return true
+			}else if top[i].hp < top[j].hp {
+				return false
+			}else if top[i].username < top[j].username {
+				return true
+			}else if top[i].username > top[j].username {
 				return false
 			}else{
-				return top[i].hp > top[j].hp
+				return top[i].id < top[j].id
 			}
 		})
 		x,y := Game().Level().Offset()
 		x,y = -x,-y
 		//log.Println("Position",x,y)
-		tl.NewText(x+1, y, "       TOP 5       ", tl.ColorBlack, tl.ColorWhite).Draw(s)
-		tl.NewText(x+1, y+1, "# Score HP  Username", tl.ColorBlack, tl.ColorWhite).Draw(s)
+		tl.NewText(x+1, y, "       TOP 5       ", tl.ColorRed, tl.ColorWhite).Draw(s)
+		tl.NewText(x+1, y+1, "# Score HP  Username", tl.ColorGreen, tl.ColorWhite).Draw(s)
 
 		for i:=0; i < int(math.Min(float64(len(top)), 5.0)) ; i++{
-			tl.NewText(x+1, y+2+i, fmt.Sprintf("%-2d%-5d %-3d %s",i+1, top[i].score, top[i].hp, top[i].username), tl.ColorBlack, tl.ColorWhite).Draw(s)
+			tl.NewText(x+1, y+2+i, fmt.Sprintf("%-2d%-5d %-3d %s",i+1, top[i].score, top[i].hp, top[i].username), Game().onlinePlayers[top[i].id].color, tl.ColorWhite).Draw(s)
 		}
 
 	}

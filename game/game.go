@@ -10,7 +10,7 @@ import (
 
 var (
 	game 	*gameClass
-	fps 			= 	180.0 // should be float
+	fps 			= 	90.0 // should be float
 	gameWidth 		=	100
 	gameHeight 		=	100
 	backgroundColor = 	tl.ColorWhite
@@ -170,22 +170,28 @@ func (g *gameClass) listenCommands() {
 				if _, ok := g.onlinePlayers[a.ID]; ok {
 					p := g.onlinePlayers[a.ID]
 
-					cell := tl.Cell{Bg: a.Color}
 					p.Username = a.Username
 					p.Score = a.Score
 					p.HP = a.HP
+					p.color = a.Color
 					p.preX, p.preY = p.Position()
 					p.SetPosition(a.X, a.Y)
 					switch a.Direction {
 					case UP:
-						TankUp(p.Tank, cell)
+						TankUp(p.Tank)
 					case DOWN:
-						TankDown(p.Tank, cell)
+						TankDown(p.Tank)
 					case LEFT:
-						TankLeft(p.Tank, cell)
+						TankLeft(p.Tank)
 					case RIGHT:
-						TankRight(p.Tank, cell)
+						TankRight(p.Tank)
 					}
+					if p.ID == Game().currentPlayerID && Menuhidden {
+						sX, sY := Game().Screen().Size()
+						tX, tY := p.Position()
+						Game().Level().SetOffset(sX/2-tX-5, sY/2-tY-5)
+					}
+
 				}
 			case BULLET:
 				b := NewBullet(a.X, a.Y, a.Direction, a.ID)
@@ -236,7 +242,7 @@ func (c Command) Send(){
 		p := Game().onlinePlayers[Game().currentPlayerID]
 		c.HP = p.HP
 		c.Score = p.Score
-		c.Username = p.Username
+		c.Username = Username()
 		c.Color = p.color
 	}
 

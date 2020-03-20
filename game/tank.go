@@ -39,58 +39,19 @@ func TankUpCanvas(tankBodyCell tl.Cell) tl.Canvas {
 	"██████████\n"+
 	"██████████\n"+
 	"██      ██\n"
-	canvasUp := tl.CanvasFromString(canv)
-
-	//lines := strings.Split(canv, "\n")
-	//canvasUp := tl.NewCanvas(w,h)
-	//for i:=0; i<h; i++{
-	//	for j:=0; j<w; j++{
-	//		if rune(lines[i][j]) == '█' {
-	//			canvasUp[j][i] = tankBodyCell
-	//		}
-	//	}
-	//}
-
-	// Tank canvas up
-	//canvasUp[4][0] = tankBodyCell
-	//canvasUp[4][1] = tankBodyCell
-	//canvasUp[4][2] = tankBodyCell
-	//canvasUp[4][3] = tankBodyCell
-	//canvasUp[4][4] = tankBodyCell
-	//canvasUp[4][5] = tankBodyCell
-	//
-	//canvasUp[1][2] = tankBodyCell
-	//canvasUp[1][3] = tankBodyCell
-	//canvasUp[1][4] = tankBodyCell
-	//canvasUp[1][5] = tankBodyCell
-	//canvasUp[1][6] = tankBodyCell
-	//canvasUp[1][7] = tankBodyCell
-	//
-	//canvasUp[2][2] = tankBodyCell
-	//canvasUp[2][3] = tankBodyCell
-	//canvasUp[2][4] = tankBodyCell
-	//canvasUp[2][5] = tankBodyCell
-	//canvasUp[2][6] = tankBodyCell
-	//canvasUp[2][7] = tankBodyCell
-	//
-	//canvasUp[6][2] = tankBodyCell
-	//canvasUp[6][3] = tankBodyCell
-	//canvasUp[6][4] = tankBodyCell
-	//canvasUp[6][5] = tankBodyCell
-	//canvasUp[6][6] = tankBodyCell
-	//canvasUp[6][7] = tankBodyCell
-	//
-	//canvasUp[7][2] = tankBodyCell
-	//canvasUp[7][3] = tankBodyCell
-	//canvasUp[7][4] = tankBodyCell
-	//canvasUp[7][5] = tankBodyCell
-	//canvasUp[7][6] = tankBodyCell
-	//canvasUp[7][7] = tankBodyCell
-	//
-	//canvasUp[3][4] = tankBodyCell
-	//canvasUp[3][5] = tankBodyCell
-	//canvasUp[5][4] = tankBodyCell
-	//canvasUp[5][5] = tankBodyCell
+	lines := strings.Split(canv, "\n")
+	runes := make([][]rune, len(lines))
+	for i := range lines {
+		runes[i] = []rune(lines[i])
+	}
+	canvasUp := tl.NewCanvas(w,h)
+	for i := 0; i < w; i++ {
+		for j := 0; j < h; j++ {
+			if runes[j][i] == '█'{
+				canvasUp[i][j] = tankBodyCell
+			}
+		}
+	}
 
 	return canvasUp
 }
@@ -101,60 +62,19 @@ func TankDownCanvas(tankBodyCell tl.Cell) tl.Canvas {
 			"██████████\n"+
 			"██  ██  ██\n"+
 			"    ██    "
-	canvasDown := tl.CanvasFromString(canv)
-	//lines := strings.Split(canv, "\n")
-	//canvasDown := tl.NewCanvas(w,h)
-	//for i:=0; i<h; i++{
-	//	for j:=0; j<w; j++{
-	//		if rune(lines[i][j]) == '█' {
-	//			canvasDown[i][j] = tankBodyCell
-	//		}
-	//	}
-	//}
-
-
-	//canvasDown := tl.NewCanvas(w, h)
-	//
-	//// Tank canvas down
-	//canvasDown[1][1] = tankBodyCell
-	//canvasDown[1][2] = tankBodyCell
-	//canvasDown[1][3] = tankBodyCell
-	//canvasDown[1][4] = tankBodyCell
-	//canvasDown[1][5] = tankBodyCell
-	//canvasDown[1][6] = tankBodyCell
-	//
-	//canvasDown[2][1] = tankBodyCell
-	//canvasDown[2][2] = tankBodyCell
-	//canvasDown[2][3] = tankBodyCell
-	//canvasDown[2][4] = tankBodyCell
-	//canvasDown[2][5] = tankBodyCell
-	//canvasDown[2][6] = tankBodyCell
-	//
-	//canvasDown[6][1] = tankBodyCell
-	//canvasDown[6][2] = tankBodyCell
-	//canvasDown[6][3] = tankBodyCell
-	//canvasDown[6][4] = tankBodyCell
-	//canvasDown[6][5] = tankBodyCell
-	//canvasDown[6][6] = tankBodyCell
-	//
-	//canvasDown[7][1] = tankBodyCell
-	//canvasDown[7][2] = tankBodyCell
-	//canvasDown[7][3] = tankBodyCell
-	//canvasDown[7][4] = tankBodyCell
-	//canvasDown[7][5] = tankBodyCell
-	//canvasDown[7][6] = tankBodyCell
-	//
-	//canvasDown[4][3] = tankBodyCell
-	//canvasDown[4][4] = tankBodyCell
-	//canvasDown[4][5] = tankBodyCell
-	//canvasDown[4][6] = tankBodyCell
-	//canvasDown[4][7] = tankBodyCell
-	//canvasDown[4][7] = tankBodyCell
-	//
-	//canvasDown[3][3] = tankBodyCell
-	//canvasDown[3][4] = tankBodyCell
-	//canvasDown[5][3] = tankBodyCell
-	//canvasDown[5][4] = tankBodyCell
+	lines := strings.Split(canv, "\n")
+	runes := make([][]rune, len(lines))
+	for i := range lines {
+		runes[i] = []rune(lines[i])
+	}
+	canvasDown := tl.NewCanvas(w,h)
+	for i := 0; i < w; i++ {
+		for j := 0; j < h; j++ {
+			if runes[j][i] == '█'{
+				canvasDown[i][j] = tankBodyCell
+			}
+		}
+	}
 
 	return canvasDown
 }
@@ -168,59 +88,19 @@ func TankLeftCanvas(tankBodyCell tl.Cell) tl.Canvas {
 		"    ████  \n"+
 		"  ████████"
 
-	canvasLeft := tl.CanvasFromString(canv)
-
-	//lines := strings.Split(canv, "\n")
-	//canvasLeft := tl.NewCanvas(w,h)
-	//for i:=0; i<h; i++{
-	//	for j:=0; j<w; j++{
-	//		if rune(lines[i][j]) == '█' {
-	//			canvasLeft[i][j] = tankBodyCell
-	//		}
-	//	}
-	//}
-
-
-	// Tank canvas left
-	//canvasLeft[2][1] = tankBodyCell
-	//canvasLeft[3][1] = tankBodyCell
-	//canvasLeft[4][1] = tankBodyCell
-	//canvasLeft[5][1] = tankBodyCell
-	//canvasLeft[6][1] = tankBodyCell
-	//canvasLeft[7][1] = tankBodyCell
-	//
-	//canvasLeft[2][2] = tankBodyCell
-	//canvasLeft[3][2] = tankBodyCell
-	//canvasLeft[4][2] = tankBodyCell
-	//canvasLeft[5][2] = tankBodyCell
-	//canvasLeft[6][2] = tankBodyCell
-	//canvasLeft[7][2] = tankBodyCell
-	//
-	//canvasLeft[2][6] = tankBodyCell
-	//canvasLeft[3][6] = tankBodyCell
-	//canvasLeft[4][6] = tankBodyCell
-	//canvasLeft[5][6] = tankBodyCell
-	//canvasLeft[6][6] = tankBodyCell
-	//canvasLeft[7][6] = tankBodyCell
-	//
-	//canvasLeft[2][7] = tankBodyCell
-	//canvasLeft[3][7] = tankBodyCell
-	//canvasLeft[4][7] = tankBodyCell
-	//canvasLeft[5][7] = tankBodyCell
-	//canvasLeft[6][7] = tankBodyCell
-	//canvasLeft[7][7] = tankBodyCell
-	//
-	//canvasLeft[0][4] = tankBodyCell
-	//canvasLeft[1][4] = tankBodyCell
-	//canvasLeft[2][4] = tankBodyCell
-	//canvasLeft[3][4] = tankBodyCell
-	//canvasLeft[4][4] = tankBodyCell
-	//canvasLeft[5][4] = tankBodyCell
-	//
-	//canvasLeft[4][3] = tankBodyCell
-	//canvasLeft[5][3] = tankBodyCell
-	//canvasLeft[4][5] = tankBodyCell
-	//canvasLeft[5][5] = tankBodyCell
+	lines := strings.Split(canv, "\n")
+	runes := make([][]rune, len(lines))
+	for i := range lines {
+		runes[i] = []rune(lines[i])
+	}
+	canvasLeft := tl.NewCanvas(w,h)
+	for i := 0; i < w; i++ {
+		for j := 0; j < h; j++ {
+			if runes[j][i] == '█'{
+				canvasLeft[i][j] = tankBodyCell
+			}
+		}
+	}
 
 	return canvasLeft
 }
@@ -235,60 +115,21 @@ func TankRightCanvas(tankBodyCell tl.Cell) tl.Canvas {
 		"████████  "
 	//canvasRight := tl.CanvasFromString(canv)
 
-
 	lines := strings.Split(canv, "\n")
+	runes := make([][]rune, len(lines))
+	for i := range lines {
+		runes[i] = []rune(lines[i])
+	}
 	canvasRight := tl.NewCanvas(w,h)
-	for i:=0; i<h; i++{
-		for j:=0; j<w; j++{
-			if rune(lines[i][j]) == '█' {
+	for i := 0; i < w; i++ {
+		for j := 0; j < h; j++ {
+			if runes[j][i] == '█'{
 				canvasRight[i][j] = tankBodyCell
 			}
 		}
 	}
 
 
-
-
-	// Tank canvas right
-	//canvasRight[2][1] = tankBodyCell
-	//canvasRight[3][1] = tankBodyCell
-	//canvasRight[4][1] = tankBodyCell
-	//canvasRight[5][1] = tankBodyCell
-	//canvasRight[6][1] = tankBodyCell
-	//canvasRight[1][1] = tankBodyCell
-	//
-	//canvasRight[2][2] = tankBodyCell
-	//canvasRight[3][2] = tankBodyCell
-	//canvasRight[4][2] = tankBodyCell
-	//canvasRight[5][2] = tankBodyCell
-	//canvasRight[6][2] = tankBodyCell
-	//canvasRight[1][2] = tankBodyCell
-	//
-	//canvasRight[2][6] = tankBodyCell
-	//canvasRight[3][6] = tankBodyCell
-	//canvasRight[4][6] = tankBodyCell
-	//canvasRight[5][6] = tankBodyCell
-	//canvasRight[6][6] = tankBodyCell
-	//canvasRight[1][6] = tankBodyCell
-	//
-	//canvasRight[2][7] = tankBodyCell
-	//canvasRight[3][7] = tankBodyCell
-	//canvasRight[4][7] = tankBodyCell
-	//canvasRight[5][7] = tankBodyCell
-	//canvasRight[6][7] = tankBodyCell
-	//canvasRight[1][7] = tankBodyCell
-	//
-	//canvasRight[7][4] = tankBodyCell
-	//canvasRight[3][4] = tankBodyCell
-	//canvasRight[4][4] = tankBodyCell
-	//canvasRight[5][4] = tankBodyCell
-	//canvasRight[6][4] = tankBodyCell
-	//canvasRight[7][4] = tankBodyCell
-	//
-	//canvasRight[3][3] = tankBodyCell
-	//canvasRight[4][3] = tankBodyCell
-	//canvasRight[3][5] = tankBodyCell
-	//canvasRight[4][5] = tankBodyCell
 
 	return canvasRight
 }
@@ -308,7 +149,7 @@ func NewTank(cell tl.Cell) *Tank {
 		Entity: tl.NewEntity(0, 0, 10, 5),
 	}
 
-	TankUp(&tank, cell)
+	TankUp(&tank)
 
 	return &tank
 
@@ -323,47 +164,47 @@ func NewTankXY(x, y int, cell tl.Cell, direction int) *Tank {
 	tank.color = cell.Bg
 	switch direction {
 	case UP:
-		TankUp(&tank, cell)
+		TankUp(&tank)
 	case RIGHT:
-		TankRight(&tank, cell)
+		TankRight(&tank)
 	case LEFT:
-		TankLeft(&tank, cell)
+		TankLeft(&tank)
 	case DOWN:
-		TankDown(&tank, cell)
+		TankDown(&tank)
 	}
 
 	return &tank
 
 }
 
-func TankUp(tank *Tank, cell tl.Cell) {
+func TankUp(tank *Tank) {
 	//
 	//Refresh tank direction
-	canvas := TankUpCanvas(cell)
+	canvas := TankUpCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = UP
 }
 
-func TankDown(tank *Tank, cell tl.Cell) {
+func TankDown(tank *Tank) {
 
 	// Refresh tank direction
-	canvas := TankDownCanvas(cell)
+	canvas := TankDownCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = DOWN
 }
 
-func TankLeft(tank *Tank, cell tl.Cell) {
+func TankLeft(tank *Tank) {
 
 	// Refresh tank direction
-	canvas := TankLeftCanvas(cell)
+	canvas := TankLeftCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = LEFT
 }
 
-func TankRight(tank *Tank, cell tl.Cell) {
+func TankRight(tank *Tank) {
 
 	// Refresh tank direction
-	canvas := TankRightCanvas(cell)
+	canvas := TankRightCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = RIGHT
 }
