@@ -59,7 +59,7 @@ func (b Bullet) Tick(event tl.Event) {
 			if id != Game().currentPlayerID && b.owner == Game().currentPlayerID{
 				if p.HP > 5 {
 					Command{ID: id, Action: ATTACKED}.Send()
-					Command{ID: b.owner, Action:HITTED}.Send()
+					Command{ID: b.owner, Action: HIT}.Send()
 				}else{
 					Command{ID: p.ID, Action: DELETE}.Send()
 					Command{ID: b.owner, Action:KILL}.Send()

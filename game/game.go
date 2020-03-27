@@ -158,7 +158,7 @@ func (g *gameClass) listenCommands() {
 					g.onlinePlayers[a.ID].HP += 5
 					g.onlinePlayers[a.ID].Score += 1
 				}
-			case HITTED:
+			case HIT:
 				if _, ok := g.onlinePlayers[a.ID]; ok {
 					g.onlinePlayers[a.ID].HP += 5
 				}
@@ -217,13 +217,13 @@ func (g *gameClass) listenCommands() {
 
 
 const (
-	TANK = 0
-	BULLET = 1
-	DELETE = 2
-	CHECK = 3
-	HITTED = 4
+	TANK     = 0
+	BULLET   = 1
+	DELETE   = 2
+	CHECK    = 3
+	HIT      = 4
 	ATTACKED = 5
-	KILL = 6
+	KILL     = 6
 ) // command action
 
 type Command struct {

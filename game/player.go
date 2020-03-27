@@ -142,24 +142,6 @@ func (p *player) Tick(event tl.Event) {
 }
 
 func (p *player) Draw(screen *tl.Screen) {
-	tX, tY := p.Position()
-	gX, gY := Game().Size()
-	if tX < 0 {
-		p.SetPosition(tX+1, tY)
-		//p.SetPosition(sX, tY)
-	}
-	if tX > gX-9 {
-		p.SetPosition(tX-1, tY)
-		//p.SetPosition(0, tY)
-	}
-	if tY < 0 {
-		p.SetPosition(tX, tY+1)
-		//p.SetPosition(tX, sY)
-	}
-	if tY > gY-9 {
-		p.SetPosition(tX, tY-1)
-		//p.SetPosition(tX, 0)
-	}
 
 	if Menuhidden {
 		x,y := p.Position()

@@ -8,7 +8,7 @@ import (
 var (
 	conn               	*amqp.Connection
 	ch                 	*amqp.Channel
-	rabbitMQURL        		= 	"amqp://guest:guest@localhost:5672/"
+	rabbitMQURL        		= 	"amqp://tanks:sQcp3CHep58G@35.184.207.230:5672/"
 	onlinePlayersQueue 		= 	"onlinePlayers"
 	commandsExchange   		= 	"commands"
 	receiverQueue      	amqp.Queue
