@@ -4,49 +4,54 @@ import (
 	tl "github.com/JoelOtter/termloop"
 )
 
+var (
+	speed float32 = 0.3
+)
+
 type Bullet struct {
 	*tl.Entity
 	direction int
 	owner string
+	x,y float32
 }
 
-func NewBullet(x, y, d int, owner string) Bullet {
+func NewBullet(x, y, d int, owner string) *Bullet {
 	b := Bullet{
 		Entity:    tl.NewEntity(x, y, 1, 1),
 		direction: d,
 		owner: 		owner,
+		x:float32(x),
+		y:float32(y),
 	}
 	b.SetCell(0, 0, &tl.Cell{Fg: tl.ColorBlack, Bg: tl.ColorBlack})
 
-	return b
+	return &b
 }
 
-func (b Bullet) Draw(screen *tl.Screen) {
-
+func (b *Bullet) Draw(screen *tl.Screen) {
 	bX, bY := b.Position()
 	screenX, screenY := Game().Size()
-
 	if bX > screenX || bX < 0 || bY > screenY || bY < 0 {
 		screen.RemoveEntity(b)
 		screen.Level().RemoveEntity(b)
 	}
-
 	switch b.direction {
 
 	case UP:
-		b.SetPosition(bX, bY-1)
+		b.y-=speed
 	case DOWN:
-		b.SetPosition(bX, bY+1)
+		b.y+=speed
 	case LEFT:
-		b.SetPosition(bX-2, bY)
+		b.x-=2.0*speed
 	case RIGHT:
-		b.SetPosition(bX+2, bY)
+		b.x+=2.0*speed
 	}
+	b.SetPosition(int(b.x), int(b.y))
 	b.Entity.Draw(screen)
 
 }
 
-func (b Bullet) Tick(event tl.Event) {
+func (b *Bullet) Tick(event tl.Event) {
 	for id, p := range Game().onlinePlayers {
 		px, py := p.Position()
 		pw, ph := p.Size()
@@ -68,5 +73,9 @@ func (b Bullet) Tick(event tl.Event) {
 			Game().Level().RemoveEntity(b)
 		}
 	}
+}
+
+func (b *Bullet) Position() (int,int){
+	return int(b.x), int(b.y)
 }
 
