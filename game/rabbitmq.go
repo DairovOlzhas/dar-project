@@ -13,6 +13,7 @@ var (
 	onlinePlayersQueue 		= 	"onlinePlayers"
 	commandsExchange   		= 	"commands"
 	onlineExchange			= 	"onlines"
+	onlineQueue 		amqp.Queue
 	receiverQueue      	amqp.Queue
 	checkOnlinePlayersQueue = 	"checkOnline"
 )
@@ -32,6 +33,7 @@ func RabbitMQ(){
 
 	ch, err = conn.Channel()
 	failOnError(err, "Failed to open a Channel", "Channel opened")
+
 	err = ch.ExchangeDeclare(
 		commandsExchange,
 		"fanout",
@@ -42,6 +44,8 @@ func RabbitMQ(){
 		nil,
 	)
 	failOnError(err, "Failed to open a Channel",  commandsExchange + " exchange declared")
+	receiverQueue = QueueDeclare("", true)
+	QueueBind(receiverQueue.Name, commandsExchange)
 
 	err = ch.ExchangeDeclare(
 		onlineExchange,
@@ -53,11 +57,10 @@ func RabbitMQ(){
 		nil,
 	)
 	failOnError(err, "Failed to open a Channel",  onlineExchange + " exchange declared")
+	onlineQueue = QueueDeclare("", true)
+	QueueBind(onlineQueue.Name, onlineExchange)
 
 
-	QueueDeclare(onlinePlayersQueue, true)
-	receiverQueue = QueueDeclare("", true)
-	QueueBind(receiverQueue.Name, commandsExchange)
 	QueueDeclare(checkOnlinePlayersQueue, true)
 }
 

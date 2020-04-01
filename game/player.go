@@ -60,11 +60,16 @@ func NewPlayer() *player{
 	}
 
 	Game().onlinePlayers[player.ID] = player
-	game.Screen().Level().AddEntity(player)
+	Game().Screen().Level().AddEntity(player)
 
-	Publisher("", OnlinePlayersQueue(), amqp.Publishing{Body: []byte(player.ID)})
+	go func() {
+		for {
+			Publisher(onlineExchange, "", amqp.Publishing{Body: []byte(player.ID)})
+			time.Sleep(time.Second*10)
+		}
+	}()
+
 	Game().currentPlayerID = player.ID
-
 
 	Publisher("", CheckOnlinePlayersQueue(),
 		amqp.Publishing{
@@ -75,9 +80,7 @@ func NewPlayer() *player{
 
 	x,y := player.Position()
 	Command{Action:REQUEST}.Send()
-	time.Sleep(time.Second)
 	Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score:player.Score}.Send()
-	//Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score:player.Score}.Send()
 	return player
 }
 
@@ -85,6 +88,7 @@ func (p *player) Tick(event tl.Event) {
 	if p.ID == Game().currentPlayerID && Menuhidden {
 		p.preX, p.preY = p.Position()
 		command := Command{ID: p.ID, Action: TANK, X: p.preX, Y: p.preY, Direction: p.direction, Score:-1}
+
 
 		if event.Type == tl.EventKey {
 

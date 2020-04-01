@@ -197,7 +197,6 @@ func StartMenu(){
 
 	items := []string{"Start Game", "Set Name", "Exit"}
 	SetUsername("Player_NO_NAME_"+strconv.Itoa(len(Game().onlinePlayers)))
-	fmt.Println("selected item: "+items[CreateMenu(items)])
-
+	CreateMenu(items)
 }
 

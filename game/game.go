@@ -83,23 +83,20 @@ func (g *gameClass) Start() {
 
 func (g *gameClass) getOnlinePlayers() {
 
-	msgs := Consumer(onlinePlayersQueue)
+	msgs := Consumer(onlineQueue.Name)
 
 	go func() {
 		for d := range msgs {
 			id := string(d.Body)
 
-			if _, prs := playersToDelete[id]; prs{
-				d.Ack(false)
-			}else{
+			if _, prs := playersToDelete[id]; !prs{
 				if _, prs := g.onlinePlayers[id]; !prs {
 					g.onlinePlayers[id] = Player(id)
 					game.Screen().Level().AddEntity(g.onlinePlayers[id])
 				}
-
-				d.Nack(false, true)
 			}
-			time.Sleep(time.Millisecond*500)
+
+			d.Ack(false)
 		}
 	}()
 }
