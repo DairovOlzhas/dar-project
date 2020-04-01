@@ -12,6 +12,7 @@ var (
 	//rabbitMQURL        		= 	"amqp://guest:guest@localhost:5672/"
 	onlinePlayersQueue 		= 	"onlinePlayers"
 	commandsExchange   		= 	"commands"
+	onlineExchange			= 	"onlines"
 	receiverQueue      	amqp.Queue
 	checkOnlinePlayersQueue = 	"checkOnline"
 )
@@ -31,7 +32,6 @@ func RabbitMQ(){
 
 	ch, err = conn.Channel()
 	failOnError(err, "Failed to open a Channel", "Channel opened")
-
 	err = ch.ExchangeDeclare(
 		commandsExchange,
 		"fanout",
@@ -42,6 +42,18 @@ func RabbitMQ(){
 		nil,
 	)
 	failOnError(err, "Failed to open a Channel",  commandsExchange + " exchange declared")
+
+	err = ch.ExchangeDeclare(
+		onlineExchange,
+		"fanout",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	failOnError(err, "Failed to open a Channel",  onlineExchange + " exchange declared")
+
 
 	QueueDeclare(onlinePlayersQueue, true)
 	receiverQueue = QueueDeclare("", true)
@@ -82,6 +94,9 @@ func QueueBind(qname string, exchangeName string){
 		qname + " queue binded to " +exchangeName+ " exchange")
 }
 
+func QueueDelete(qname string ){
+	ch.QueueDelete(qname,false, false,false,)
+}
 
 func Consumer(qname string) <-chan amqp.Delivery {
 	msgs, err := ch.Consume(

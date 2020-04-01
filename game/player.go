@@ -73,13 +73,18 @@ func NewPlayer() *player{
 			ReplyTo:       ReceiverQueue(),
 		})
 
+	x,y := player.Position()
+	Command{Action:REQUEST}.Send()
+	time.Sleep(time.Second)
+	Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score:player.Score}.Send()
+	//Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score:player.Score}.Send()
 	return player
 }
 
 func (p *player) Tick(event tl.Event) {
 	if p.ID == Game().currentPlayerID && Menuhidden {
 		p.preX, p.preY = p.Position()
-		command := Command{ID: p.ID, Action: TANK, X: p.preX, Y: p.preY, Direction: p.direction}
+		command := Command{ID: p.ID, Action: TANK, X: p.preX, Y: p.preY, Direction: p.direction, Score:-1}
 
 		if event.Type == tl.EventKey {
 

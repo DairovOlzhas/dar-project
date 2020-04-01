@@ -43,19 +43,19 @@ func (m *menu) Tick(ev tl.Event) {
 	}
 	if ev.Type == tl.EventKey {
 		if !nameChanging {
-			switch {
-			case ev.Ch == 'M', ev.Ch == 'm', ev.Ch == 'ь', ev.Ch == 'Ь':
+			switch ev.Key{
+			case tl.Key(65535):
 				Menuhidden = false
 				m.index = 0
-			case ev.Key  == tl.KeyArrowUp:
+			case tl.KeyArrowUp:
 				if m.index > 0 && !Menuhidden{
 					m.index -= 1
 				}
-			case ev.Key  == tl.KeyArrowDown:
+			case tl.KeyArrowDown:
 				if m.index < len(m.items)-1 && !Menuhidden{
 					m.index += 1
 				}
-			case ev.Key  == tl.KeyEnter:
+			case tl.KeyEnter:
 				switch m.index {
 				case START_OR_RESUME_GAME:
 					if _, prs := Game().onlinePlayers[Game().currentPlayerID]; !prs {
@@ -70,14 +70,14 @@ func (m *menu) Tick(ev tl.Event) {
 				}
 			}
 		} else {
-			switch   {
-			case ev.Ch == 'M', ev.Ch == 'm', ev.Ch == 'ь', ev.Ch == 'Ь':
+			switch  ev.Key {
+			case tl.Key(65535) :
 				nameChanging = false
-			case ev.Key == tl.Key(127):
+			case tl.Key(127):
 				if len(new_username) > 0 {
 					new_username = new_username[:len(new_username)-1]
 				}
-			case ev.Key == tl.KeyEnter:
+			case tl.KeyEnter:
 				if len(new_username) > 0{
 					SetUsername(string(new_username))
 				}
@@ -112,7 +112,7 @@ func (m *menu) Draw(s *tl.Screen) {
 			x,y := Game().Level().Offset()
 			x,y = -x,-y
 
-			tl.NewText(x+sx/2-11, y, "press M to GO the BACK", tl.ColorRed, tl.ColorYellow).Draw(s)
+			tl.NewText(x+sx/2-11, y, "press F1 to GO the BACK", tl.ColorRed, tl.ColorYellow).Draw(s)
 
 		} else {
 			for i,_ := range m.items {
@@ -168,7 +168,7 @@ func (m *menu) Draw(s *tl.Screen) {
 
 		tl.NewText(x+1, y, "       TOP 5       ", tl.ColorRed, tl.ColorWhite).Draw(s)
 		tl.NewText(x+1, y+1, "# Score HP  Username", tl.ColorGreen, tl.ColorWhite).Draw(s)
-		tl.NewText(x+sX/2-11, y, "press M to GO the MENU", tl.ColorRed, tl.ColorYellow).Draw(s)
+		tl.NewText(x+sX/2-11, y, "press F1 to GO the MENU", tl.ColorRed, tl.ColorYellow).Draw(s)
 
 		for i:=0; i < int(math.Min(float64(len(top)), 5.0)) ; i++{
 			tl.NewText(x+1, y+2+i, fmt.Sprintf("%-2d%-5d %-3d %s",i+1, top[i].score, top[i].hp, top[i].username), Game().onlinePlayers[top[i].id].color, tl.ColorWhite).Draw(s)

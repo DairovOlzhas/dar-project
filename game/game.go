@@ -99,7 +99,7 @@ func (g *gameClass) getOnlinePlayers() {
 
 				d.Nack(false, true)
 			}
-			time.Sleep(time.Second)
+			time.Sleep(time.Millisecond*500)
 		}
 	}()
 }
@@ -136,6 +136,8 @@ func (g *gameClass) checkOnlinePlayers() {
 					d.Nack(false, true)
 				}
 
+				QueueDelete(q.Name)
+
 			}
 		}
 	}()
@@ -168,7 +170,9 @@ func (g *gameClass) listenCommands() {
 					p := g.onlinePlayers[a.ID]
 
 					p.Username = a.Username
-					p.Score = a.Score
+					if a.Score != -1 {
+						p.Score = a.Score
+					}
 					p.HP = a.HP
 					p.color = a.Color
 					p.preX, p.preY = p.Position()
@@ -209,6 +213,13 @@ func (g *gameClass) listenCommands() {
 				if a.ID == g.currentPlayerID {
 					Publisher("", d.ReplyTo, amqp.Publishing{})
 				}
+			case REQUEST:
+				if _, ok := g.onlinePlayers[g.currentPlayerID]; ok {
+					player := g.onlinePlayers[g.currentPlayerID]
+					x,y := player.Position()
+					Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score: player.Score}.Send()
+					//Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score: player.Score}.Send()
+				}
 			}
 
 			d.Ack(false)
@@ -223,7 +234,7 @@ const (
 	BULLET   = 1
 	DELETE   = 2
 	CHECK    = 3
-	//HIT      = 4
+	REQUEST      = 4
 	ATTACKED = 5
 	KILL     = 6
 ) // command action
@@ -243,7 +254,7 @@ func (c Command) Send(){
 	if c.Action == TANK {
 		p := Game().onlinePlayers[Game().currentPlayerID]
 		c.HP = p.HP
-		c.Score = p.Score
+		//c.Score = p.Score
 		c.Username = Username()
 		c.Color = p.color
 	}
