@@ -46,11 +46,10 @@ func NewPlayer() *player{
 			randInt(1,4),
 			),
 		ID:       genRandString(32),
-		Username: "Player_NO_NAME_"+strconv.Itoa(len(Game().onlinePlayers)),
+		Username: Username(),
 		Score:    0,
 		HP: 	  100,
 	}
-	SetUsername(player.Username)
 	for player.CollideWorker(player.direction) {
 		player.direction = randInt(1,4)
 		player.SetPosition(	randInt(0,gX-9), randInt(0, gY-9))
@@ -136,8 +135,8 @@ func (p *player) Tick(event tl.Event) {
 				command.Y = bulletY
 				command.Direction = bulletDirection
 			}
+			command.Send()
 		}
-		command.Send()
 	}
 }
 
@@ -145,9 +144,9 @@ func (p *player) Draw(screen *tl.Screen) {
 
 	if Menuhidden {
 		x,y := p.Position()
-		teX := len(p.Username)
+		teX := len([]rune(p.Username))
 		tl.NewText(x+3,y-2,strconv.Itoa(p.HP), tl.ColorBlue, tl.ColorWhite).Draw(screen)
-		tl.NewText(x+5-teX/2,y-1, p.Username, tl.ColorBlack, tl.ColorWhite).Draw(screen)
+		tl.NewText(x+4-teX/2,y-1, p.Username, tl.ColorBlack, tl.ColorWhite).Draw(screen)
 		p.Entity.Draw(screen)
 	}
 }

@@ -5,12 +5,14 @@ import (
 	tl "github.com/JoelOtter/termloop"
 	"math"
 	"sort"
+	"strconv"
 )
 
 var (
-	Menuhidden   = false
-	nameChanging = false
-	new_username = ""
+	Menuhidden      = false
+	nameChanging    = false
+	currentUsername string
+	new_username    []rune
 )
 
 type menu struct {
@@ -25,11 +27,11 @@ const (
 )
 
 func Username() string {
-	return new_username
+	return currentUsername
 }
 
 func SetUsername(username string) {
-	new_username = username
+	currentUsername = username
 }
 
 func (m *menu) Tick(ev tl.Event) {
@@ -41,19 +43,19 @@ func (m *menu) Tick(ev tl.Event) {
 	}
 	if ev.Type == tl.EventKey {
 		if !nameChanging {
-			switch ev.Key {
-			case tl.Key(127):
+			switch {
+			case ev.Ch == 'M', ev.Ch == 'm', ev.Ch == 'ь', ev.Ch == 'Ь':
 				Menuhidden = false
 				m.index = 0
-			case tl.KeyArrowUp:
+			case ev.Key  == tl.KeyArrowUp:
 				if m.index > 0 && !Menuhidden{
 					m.index -= 1
 				}
-			case tl.KeyArrowDown:
+			case ev.Key  == tl.KeyArrowDown:
 				if m.index < len(m.items)-1 && !Menuhidden{
 					m.index += 1
 				}
-			case tl.KeyEnter:
+			case ev.Key  == tl.KeyEnter:
 				switch m.index {
 				case START_OR_RESUME_GAME:
 					if _, prs := Game().onlinePlayers[Game().currentPlayerID]; !prs {
@@ -62,25 +64,28 @@ func (m *menu) Tick(ev tl.Event) {
 					Menuhidden = true
 				case CHANGENAME:
 					nameChanging = true
-					new_username = ""
+					new_username = make([]rune, 0)
 				case EXIT:
 					Game().Stop()
 				}
 			}
 		} else {
-			switch ev.Key {
-			case tl.Key(127):
+			switch   {
+			case ev.Ch == 'M', ev.Ch == 'm', ev.Ch == 'ь', ev.Ch == 'Ь':
 				nameChanging = false
-			case tl.Key(65522):
+			case ev.Key == tl.Key(127):
 				if len(new_username) > 0 {
-					new_username = new_username[0:len(new_username)-1]
+					new_username = new_username[:len(new_username)-1]
 				}
-			case tl.KeyEnter:
+			case ev.Key == tl.KeyEnter:
+				if len(new_username) > 0{
+					SetUsername(string(new_username))
+				}
 				nameChanging = false
 			default:
 				if ((ev.Ch >= 'a' && ev.Ch <= 'z' )|| (ev.Ch >= 'A' && ev.Ch <= 'Z') ||
-					(ev.Ch >= 'а' && ev.Ch <= 'я' )|| (ev.Ch >= 'А' && ev.Ch <= 'Я') ) && len(new_username) < 10{
-					new_username = new_username + string(ev.Ch)
+					(ev.Ch >= 'а' && ev.Ch <= 'я' )|| (ev.Ch >= 'А' && ev.Ch <= 'Я') ) && len(new_username) < 15{
+					new_username = append(new_username, ev.Ch)
 				}
 			}
 		}
@@ -99,10 +104,15 @@ func (m *menu) Draw(s *tl.Screen) {
 			text.SetPosition(sx/2-ix/2, sy/2-iy/2)
 			text.Draw(s)
 
-			username := tl.NewText(0,0, new_username, tl.ColorBlack, tl.ColorWhite)
+			username := tl.NewText(0,0, string(new_username), tl.ColorBlack, tl.ColorWhite)
 			ix, iy = username.Size()
 			username.SetPosition(sx/2-ix/2, sy/2-iy/2+1)
 			username.Draw(s)
+
+			x,y := Game().Level().Offset()
+			x,y = -x,-y
+
+			tl.NewText(x+sx/2-11, y, "press M to GO the BACK", tl.ColorRed, tl.ColorYellow).Draw(s)
 
 		} else {
 			for i,_ := range m.items {
@@ -132,6 +142,8 @@ func (m *menu) Draw(s *tl.Screen) {
 				username string
 			}{id: p.ID,score: p.Score, hp: p.HP, username: p.Username})
 		}
+
+		// sorting comparator
 		sort.Slice(top, func(i, j int) bool {
 			if top[i].score > top[j].score {
 				return true
@@ -149,15 +161,19 @@ func (m *menu) Draw(s *tl.Screen) {
 				return top[i].id < top[j].id
 			}
 		})
+
 		x,y := Game().Level().Offset()
+		sX, _ := Game().Screen().Size()
 		x,y = -x,-y
-		//log.Println("Position",x,y)
+
 		tl.NewText(x+1, y, "       TOP 5       ", tl.ColorRed, tl.ColorWhite).Draw(s)
 		tl.NewText(x+1, y+1, "# Score HP  Username", tl.ColorGreen, tl.ColorWhite).Draw(s)
+		tl.NewText(x+sX/2-11, y, "press M to GO the MENU", tl.ColorRed, tl.ColorYellow).Draw(s)
 
 		for i:=0; i < int(math.Min(float64(len(top)), 5.0)) ; i++{
 			tl.NewText(x+1, y+2+i, fmt.Sprintf("%-2d%-5d %-3d %s",i+1, top[i].score, top[i].hp, top[i].username), Game().onlinePlayers[top[i].id].color, tl.ColorWhite).Draw(s)
 		}
+
 
 	}
 }
@@ -180,7 +196,7 @@ func CreateMenu(arg_items []string) int {
 func StartMenu(){
 
 	items := []string{"Start Game", "Set Name", "Exit"}
-
+	SetUsername("Player_NO_NAME_"+strconv.Itoa(len(Game().onlinePlayers)))
 	fmt.Println("selected item: "+items[CreateMenu(items)])
 
 }

@@ -63,11 +63,15 @@ func (b *Bullet) Tick(event tl.Event) {
 			py < by+bh && py+ph > by {
 			if id != Game().currentPlayerID && b.owner == Game().currentPlayerID{
 				if p.HP > 5 {
-					Command{ID: id, Action: ATTACKED}.Send()
-					Command{ID: b.owner, Action: HIT}.Send()
+					Game().onlinePlayers[id].HP -= 5
+					Command{ID: id, ReplyTo: b.owner,Action: ATTACKED}.Send()
 				}else{
 					Command{ID: p.ID, Action: DELETE}.Send()
-					Command{ID: b.owner, Action:KILL}.Send()
+					playersToDelete[p.ID] = true
+					Game().level.RemoveEntity(Game().onlinePlayers[p.ID])
+					delete(Game().onlinePlayers, p.ID)
+					Command{ID: b.owner, ReplyTo: b.owner, Action:KILL}.Send()
+					Game().onlinePlayers[b.owner].Score += 1
 				}
 			}
 			Game().Level().RemoveEntity(b)

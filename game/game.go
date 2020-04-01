@@ -11,7 +11,7 @@ import (
 var (
 	game 	*gameClass
 	fps 			= 	90.0 // should be float
-	gameWidth 		=	100
+	gameWidth 		=	150
 	gameHeight 		=	100
 	backgroundColor = 	tl.ColorWhite
 	playersToDelete = 	make(map[string]bool)
@@ -99,6 +99,7 @@ func (g *gameClass) getOnlinePlayers() {
 
 				d.Nack(false, true)
 			}
+			time.Sleep(time.Second)
 		}
 	}()
 }
@@ -126,7 +127,7 @@ func (g *gameClass) checkOnlinePlayers() {
 					}
 				}()
 
-				time.Sleep(100*time.Millisecond)
+				time.Sleep(2*time.Second)
 
 				if cnt == 0 {
 					Command{ID:d.CorrelationId, Action:DELETE,}.Send()
@@ -154,16 +155,12 @@ func (g *gameClass) listenCommands() {
 
 			switch a.Action {
 			case KILL:
-				if _, ok := g.onlinePlayers[a.ID]; ok {
-					g.onlinePlayers[a.ID].HP += 5
+				if _, ok := g.onlinePlayers[a.ID]; ok && a.ReplyTo != g.currentPlayerID{
+					//g.onlinePlayers[a.ID].HP += 5
 					g.onlinePlayers[a.ID].Score += 1
 				}
-			case HIT:
-				if _, ok := g.onlinePlayers[a.ID]; ok {
-					g.onlinePlayers[a.ID].HP += 5
-				}
 			case ATTACKED:
-				if _, ok := g.onlinePlayers[a.ID]; ok {
+				if _, ok := g.onlinePlayers[a.ID]; ok && a.ReplyTo != g.currentPlayerID{
 					g.onlinePlayers[a.ID].HP -= 5
 				}
 			case TANK:
@@ -189,7 +186,12 @@ func (g *gameClass) listenCommands() {
 					if p.ID == Game().currentPlayerID && Menuhidden {
 						sX, sY := Game().Screen().Size()
 						tX, tY := p.Position()
-						Game().Level().SetOffset(sX/2-tX-5, sY/2-tY-5)
+						padding := 2
+						x := min(gameWidth-sX+padding, max(-padding,-sX/2+tX+5))
+						y := min(gameHeight-sY+padding,max(-padding,-sY/2+tY+5))
+						Game().Level().SetOffset(-x, -y)
+						//Game().Level().SetOffset(sX/2-tX-5, sY/2-tY-5)
+
 					}
 
 				}
@@ -221,7 +223,7 @@ const (
 	BULLET   = 1
 	DELETE   = 2
 	CHECK    = 3
-	HIT      = 4
+	//HIT      = 4
 	ATTACKED = 5
 	KILL     = 6
 ) // command action
@@ -259,4 +261,17 @@ func (c Command) Send(){
 
 	Publisher(CommandsExchange(),"", msg)
 
+}
+
+func min(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
+func max(a, b int) int {
+	if a < b {
+		return b
+	}
+	return a
 }
