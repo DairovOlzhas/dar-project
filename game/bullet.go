@@ -67,11 +67,11 @@ func (b *Bullet) Tick(event tl.Event) {
 					Command{ID: id, ReplyTo: b.owner,Action: ATTACKED}.Send()
 				}else{
 					Command{ID: p.ID, Action: DELETE}.Send()
+					Game().onlinePlayers[b.owner].Score += 1
 					playersToDelete[p.ID] = true
 					Game().level.RemoveEntity(Game().onlinePlayers[p.ID])
 					delete(Game().onlinePlayers, p.ID)
 					Command{ID: b.owner, ReplyTo: b.owner, Action:KILL}.Send()
-					Game().onlinePlayers[b.owner].Score += 1
 				}
 			}
 			Game().Level().RemoveEntity(b)

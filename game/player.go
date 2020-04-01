@@ -5,6 +5,10 @@ import (
 	"github.com/streadway/amqp"
 	"math/rand"
 	"strconv"
+	"time"
+)
+var (
+	t = time.Now()
 )
 
 func randInt(min int, max int) int {
@@ -113,27 +117,30 @@ func (p *player) Tick(event tl.Event) {
 				}
 				command.Direction = LEFT
 			case tl.KeySpace:
-				var bulletX, bulletY, bulletDirection  int
-				bulletDirection = p.Tank.GetDirection()
+				if time.Now().Sub(t).Milliseconds() >= 300 {
+					var bulletX, bulletY, bulletDirection  int
+					bulletDirection = p.Tank.GetDirection()
 
-				switch bulletDirection {
-				case UP:
-					bulletX = p.preX + 4
-					bulletY = p.preY - 1
-				case DOWN:
-					bulletX = p.preX + 4
-					bulletY = p.preY + 6
-				case LEFT:
-					bulletX = p.preX - 1
-					bulletY = p.preY + 2
-				case RIGHT:
-					bulletX = p.preX + 10
-					bulletY = p.preY + 2
+					switch bulletDirection {
+					case UP:
+						bulletX = p.preX + 4
+						bulletY = p.preY - 1
+					case DOWN:
+						bulletX = p.preX + 4
+						bulletY = p.preY + 6
+					case LEFT:
+						bulletX = p.preX - 1
+						bulletY = p.preY + 2
+					case RIGHT:
+						bulletX = p.preX + 10
+						bulletY = p.preY + 2
+					}
+					command.Action = BULLET
+					command.X = bulletX
+					command.Y = bulletY
+					command.Direction = bulletDirection
+					t = time.Now()
 				}
-				command.Action = BULLET
-				command.X = bulletX
-				command.Y = bulletY
-				command.Direction = bulletDirection
 			}
 			command.Send()
 		}
