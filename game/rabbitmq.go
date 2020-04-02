@@ -2,7 +2,6 @@ package game
 
 import (
 	"github.com/streadway/amqp"
-	"log"
 )
 
 var (
@@ -18,10 +17,10 @@ var (
 
 func failOnError(err error, msg string, ok string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		//log.Fatalf("%s: %s", msg, err)
 	}
 	if ok != ""{
-		log.Printf(" [*] " + ok)
+		//log.Printf(" [*] " + ok)
 	}
 }
 

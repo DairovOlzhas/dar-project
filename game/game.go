@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	tl "github.com/JoelOtter/termloop"
 	"github.com/streadway/amqp"
-	"log"
 	"time"
 )
 
@@ -168,7 +167,7 @@ func (g *gameClass) listenCommands() {
 				g.level.AddEntity(b)
 			case DELETE:
 				if _, ok := g.onlinePlayers[c.ID]; ok {
-					log.Println("info delete received "+d.CorrelationId)
+
 					playersToDelete[c.ID] = true
 					g.level.RemoveEntity(g.onlinePlayers[c.ID])
 					delete(g.onlinePlayers, c.ID)
