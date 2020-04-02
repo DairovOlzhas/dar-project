@@ -20,7 +20,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	game.RabbitMQ()
-	//defer game.CloseConnectionAndChannel()
+	defer game.CloseConnectionAndChannel()
 
 	game.Game().Start()
 }

@@ -10,12 +10,10 @@ var (
 	ch                 	*amqp.Channel
 	rabbitMQURL        		= 	"amqp://tanks:sQcp3CHep58G@35.184.207.230:5672/"
 	//rabbitMQURL        		= 	"amqp://guest:guest@localhost:5672/"
-	onlinePlayersQueue 		= 	"onlinePlayers"
 	commandsExchange   		= 	"commands"
 	onlineExchange			= 	"onlines"
 	onlineQueue 		amqp.Queue
 	receiverQueue      	amqp.Queue
-	checkOnlinePlayersQueue = 	"checkOnline"
 )
 
 func failOnError(err error, msg string, ok string) {
@@ -27,8 +25,8 @@ func failOnError(err error, msg string, ok string) {
 	}
 }
 
-func RabbitMQ(){
-	conn, err := amqp.Dial(rabbitMQURL)
+func RabbitMQ()(err error){
+	conn, err = amqp.Dial(rabbitMQURL)
 	failOnError(err, "Failed to connect RabbitMQ", "Connected to RabbitMQ")
 
 	ch, err = conn.Channel()
@@ -60,8 +58,7 @@ func RabbitMQ(){
 	onlineQueue = QueueDeclare("", true)
 	QueueBind(onlineQueue.Name, onlineExchange)
 
-
-	QueueDeclare(checkOnlinePlayersQueue, true)
+	return
 }
 
 func CloseConnectionAndChannel() (err error){
@@ -73,11 +70,11 @@ func CloseConnectionAndChannel() (err error){
 }
 
 
-func QueueDeclare(qname string, autodelete bool) (queue amqp.Queue) {
+func QueueDeclare(queueName string, autoDelete bool) (queue amqp.Queue) {
 	queue, err := ch.QueueDeclare(
-		qname,
+		queueName,
 		false,
-		autodelete,
+		autoDelete,
 		false,
 		false,
 		nil,
@@ -86,37 +83,33 @@ func QueueDeclare(qname string, autodelete bool) (queue amqp.Queue) {
 	return
 }
 
-func QueueBind(qname string, exchangeName string){
+func QueueBind(queueName string, exchangeName string){
 	err := ch.QueueBind(
-		qname,
+		queueName,
 		"",
 		exchangeName,
 		false,
 		nil)
-	failOnError(err, "Failed to bind " + qname + " queue to " +exchangeName+ " exchange.",
-		qname + " queue binded to " +exchangeName+ " exchange")
+	failOnError(err, "Failed to bind " +queueName+ " queue to " +exchangeName+ " exchange.",
+		queueName+ " queue binded to " +exchangeName+ " exchange")
 }
 
-func QueueDelete(qname string ){
-	ch.QueueDelete(qname,false, false,false,)
-}
-
-func Consumer(qname string) <-chan amqp.Delivery {
+func Consumer(queueName string) <-chan amqp.Delivery {
 	msgs, err := ch.Consume(
-		qname,
+		queueName,
 		"",
 		false,
 		false,
 		false,
 		false,
 		nil,)
-	failOnError(err, "Failed to register consumer to " + qname + " queue", "")
+	failOnError(err, "Failed to register consumer to " +queueName+ " queue", "")
 	return msgs
 }
 
-func Publisher(exchange string, key string, publishing amqp.Publishing){
+func Publisher(exchangeName string, key string, publishing amqp.Publishing){
 	err := ch.Publish(
-		exchange,
+		exchangeName,
 		key,
 		false,
 		false,
@@ -125,10 +118,12 @@ func Publisher(exchange string, key string, publishing amqp.Publishing){
 }
 
 
-func OnlinePlayersQueue() string{ return onlinePlayersQueue}
 
 func CommandsExchange() string{ return commandsExchange}
 
 func ReceiverQueue() string{ return receiverQueue.Name}
 
-func CheckOnlinePlayersQueue() string{ return checkOnlinePlayersQueue}
+func OnlineExchange() string{ return onlineExchange}
+
+func OnlineQueue() string{ return onlineQueue.Name}
+

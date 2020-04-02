@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	speed float32 = 0.3
+	speed float32 = 0.3 //cell per tick
 )
 
 type Bullet struct {
@@ -67,11 +67,14 @@ func (b *Bullet) Tick(event tl.Event) {
 					Command{ID: id, ReplyTo: b.owner,Action: ATTACKED}.Send()
 				}else{
 					Command{ID: p.ID, Action: DELETE}.Send()
+					Command{ID: b.owner, ReplyTo: b.owner, Action:KILL}.Send()
+
 					Game().onlinePlayers[b.owner].Score += 1
+					Game().onlinePlayers[b.owner].HP += 50
+
 					playersToDelete[p.ID] = true
 					Game().level.RemoveEntity(Game().onlinePlayers[p.ID])
 					delete(Game().onlinePlayers, p.ID)
-					Command{ID: b.owner, ReplyTo: b.owner, Action:KILL}.Send()
 				}
 			}
 			Game().Level().RemoveEntity(b)

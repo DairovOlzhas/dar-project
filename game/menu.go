@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	Menuhidden      = false
-	nameChanging    = false
+	menuHidden      = false
+	nameOnChange    = false
 	currentUsername string
-	new_username    []rune
+	newUsername     []rune
 )
 
 type menu struct {
@@ -37,22 +37,22 @@ func SetUsername(username string) {
 func (m *menu) Tick(ev tl.Event) {
 	if _, prs := Game().onlinePlayers[Game().currentPlayerID]; !prs {
 		m.items[0].SetText("Start game")
-		Menuhidden = false
+		menuHidden = false
 	}else{
 		m.items[0].SetText("Resume")
 	}
 	if ev.Type == tl.EventKey {
-		if !nameChanging {
+		if !nameOnChange {
 			switch ev.Key{
 			case tl.Key(65535):
-				Menuhidden = false
+				menuHidden = false
 				m.index = 0
 			case tl.KeyArrowUp:
-				if m.index > 0 && !Menuhidden{
+				if m.index > 0 && !menuHidden {
 					m.index -= 1
 				}
 			case tl.KeyArrowDown:
-				if m.index < len(m.items)-1 && !Menuhidden{
+				if m.index < len(m.items)-1 && !menuHidden {
 					m.index += 1
 				}
 			case tl.KeyEnter:
@@ -61,31 +61,32 @@ func (m *menu) Tick(ev tl.Event) {
 					if _, prs := Game().onlinePlayers[Game().currentPlayerID]; !prs {
 						NewPlayer()
 					}
-					Menuhidden = true
+					menuHidden = true
 				case CHANGENAME:
-					nameChanging = true
-					new_username = make([]rune, 0)
+					nameOnChange = true
+					newUsername = make([]rune, 0)
 				case EXIT:
+					Command{ID: Game().currentPlayerID, Action:DELETE}.Send()
 					Game().Stop()
 				}
 			}
 		} else {
 			switch  ev.Key {
 			case tl.Key(65535) :
-				nameChanging = false
+				nameOnChange = false
 			case tl.Key(127):
-				if len(new_username) > 0 {
-					new_username = new_username[:len(new_username)-1]
+				if len(newUsername) > 0 {
+					newUsername = newUsername[:len(newUsername)-1]
 				}
 			case tl.KeyEnter:
-				if len(new_username) > 0{
-					SetUsername(string(new_username))
+				if len(newUsername) > 0{
+					SetUsername(string(newUsername))
 				}
-				nameChanging = false
+				nameOnChange = false
 			default:
-				if ((ev.Ch >= 'a' && ev.Ch <= 'z' )|| (ev.Ch >= 'A' && ev.Ch <= 'Z') ||
-					(ev.Ch >= 'а' && ev.Ch <= 'я' )|| (ev.Ch >= 'А' && ev.Ch <= 'Я') ) && len(new_username) < 15{
-					new_username = append(new_username, ev.Ch)
+				if ((ev.Ch >= '0' && ev.Ch <= '9' ) || (ev.Ch >= 'a' && ev.Ch <= 'z' )|| (ev.Ch >= 'A' && ev.Ch <= 'Z') ||
+					(ev.Ch >= 'а' && ev.Ch <= 'я' )|| (ev.Ch >= 'А' && ev.Ch <= 'Я') ) && len(newUsername) < 15{
+					newUsername = append(newUsername, ev.Ch)
 				}
 			}
 		}
@@ -94,25 +95,22 @@ func (m *menu) Tick(ev tl.Event) {
 func (m *menu) Draw(s *tl.Screen) {
 
 
-	if !Menuhidden {
+	if !menuHidden {
 		Game().Level().SetOffset(0,0)
 		sx, sy := s.Size()
-		if nameChanging {
+		if nameOnChange {
+
+			tl.NewText(sx/2-11, 0, "press F1 to GO the BACK", tl.ColorRed, tl.ColorYellow).Draw(s)
 
 			text := tl.NewText(0,0, "Enter username(at most 10 chars):", tl.ColorBlack, tl.ColorWhite)
 			ix, iy := text.Size()
 			text.SetPosition(sx/2-ix/2, sy/2-iy/2)
 			text.Draw(s)
 
-			username := tl.NewText(0,0, string(new_username), tl.ColorBlack, tl.ColorWhite)
+			username := tl.NewText(0,0, string(newUsername), tl.ColorBlack, tl.ColorWhite)
 			ix, iy = username.Size()
 			username.SetPosition(sx/2-ix/2, sy/2-iy/2+1)
 			username.Draw(s)
-
-			x,y := Game().Level().Offset()
-			x,y = -x,-y
-
-			tl.NewText(x+sx/2-11, y, "press F1 to GO the BACK", tl.ColorRed, tl.ColorYellow).Draw(s)
 
 		} else {
 			for i,_ := range m.items {
@@ -163,22 +161,26 @@ func (m *menu) Draw(s *tl.Screen) {
 		})
 
 		x,y := Game().Level().Offset()
-		sX, _ := Game().Screen().Size()
 		x,y = -x,-y
 
 		tl.NewText(x+1, y, "       TOP 5       ", tl.ColorRed, tl.ColorWhite).Draw(s)
 		tl.NewText(x+1, y+1, "# Score HP  Username", tl.ColorGreen, tl.ColorWhite).Draw(s)
-		tl.NewText(x+sX/2-11, y, "press F1 to GO the MENU", tl.ColorRed, tl.ColorYellow).Draw(s)
+
+		sW, _ := Game().Screen().Size()
+		instruction := "--press F1 to GO the MENU--Space to fire--Arrows to move--"
+		tl.NewText(x+sW/2-len(instruction)/2, y, instruction, tl.ColorRed, tl.ColorYellow).Draw(s)
 
 		for i:=0; i < int(math.Min(float64(len(top)), 5.0)) ; i++{
 			tl.NewText(x+1, y+2+i, fmt.Sprintf("%-2d%-5d %-3d %s",i+1, top[i].score, top[i].hp, top[i].username), Game().onlinePlayers[top[i].id].color, tl.ColorWhite).Draw(s)
 		}
-
-
 	}
 }
 
-func CreateMenu(arg_items []string) int {
+func StartMenu(){
+
+	arg_items := []string{"Start Game", "Set Name", "Exit"}
+
+	SetUsername("Player_NO_NAME_"+strconv.Itoa(len(Game().onlinePlayers)))
 
 	menu := menu{
 		items:    make([]*tl.Text, len(arg_items)),
@@ -190,13 +192,7 @@ func CreateMenu(arg_items []string) int {
 			menu.items[i] = tl.NewText(0,i, item, tl.ColorWhite, tl.ColorBlack)
 		}
 	}
-	Game().Level().AddEntity(&menu)
-	return menu.index
-}
-func StartMenu(){
 
-	items := []string{"Start Game", "Set Name", "Exit"}
-	SetUsername("Player_NO_NAME_"+strconv.Itoa(len(Game().onlinePlayers)))
-	CreateMenu(items)
+	Game().Level().AddEntity(&menu)
 }
 

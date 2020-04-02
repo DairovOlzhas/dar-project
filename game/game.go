@@ -27,6 +27,7 @@ type gameClass struct {
 
 	walls 			[]*tl.Rectangle
 	onlinePlayers 	map[string]*player
+
 }
 
 func Game() *gameClass {
@@ -39,8 +40,6 @@ func Game() *gameClass {
 			onlinePlayers: make(map[string]*player),
 		}
 		game.walls = NewWalls()
-		var s string
-		log.Println(s)
 	}
 	return game
 }
@@ -60,22 +59,16 @@ func (g *gameClass) Start() {
 	for _, w := range g.walls {
 		g.level.AddEntity(w)
 	}
+
 	g.Screen().SetLevel(g.level)
-	//TODO map loading
 
-
-	//TODO load online players
 	g.getOnlinePlayers()
 
-	//TODO check online users
 	g.checkOnlinePlayers()
 
-	//TODO listen commands
 	g.listenCommands()
 
-	//TODO start menu
 	StartMenu()
-
 
 	g.Game.Start()
 }
@@ -83,17 +76,19 @@ func (g *gameClass) Start() {
 
 func (g *gameClass) getOnlinePlayers() {
 
-	msgs := Consumer(onlineQueue.Name)
+	msgs := Consumer(OnlineQueue())
 
 	go func() {
 		for d := range msgs {
 			id := string(d.Body)
 
-			if _, prs := playersToDelete[id]; !prs{
-				if _, prs := g.onlinePlayers[id]; !prs {
+			if _, ok := playersToDelete[id]; !ok{
+				if _, ok := g.onlinePlayers[id]; !ok {
 					g.onlinePlayers[id] = Player(id)
 					game.Screen().Level().AddEntity(g.onlinePlayers[id])
+					Command{Action:REQUEST, ReplyTo:ReceiverQueue()}.Send()
 				}
+				g.onlinePlayers[id].lastOnlineTime = time.Now()
 			}
 
 			d.Ack(false)
@@ -103,42 +98,16 @@ func (g *gameClass) getOnlinePlayers() {
 
 func (g *gameClass) checkOnlinePlayers() {
 
-	msgs := Consumer(CheckOnlinePlayersQueue())
-
-	go func(){
-		for d := range msgs {
-			if d.CorrelationId != g.currentPlayerID {
-				q := QueueDeclare("", true)
-
-				for i:=0; i < 3; i++ {
-					Command{ID: d.CorrelationId, Action: CHECK, ReplyTo: q.Name}.Send()
+	go func() {
+		for {
+			for id,p := range g.onlinePlayers {
+				if time.Now().Sub(p.lastOnlineTime).Seconds() > 10 {
+					Command{ID:id, Action:DELETE,}.Send()
 				}
-
-				msgs := Consumer(q.Name)
-
-				cnt := 0
-				go func() {
-					for range msgs {
-						cnt++
-						log.Println("warning "+d.CorrelationId)
-					}
-				}()
-
-				time.Sleep(2*time.Second)
-
-				if cnt == 0 {
-					Command{ID:d.CorrelationId, Action:DELETE,}.Send()
-					d.Ack(false)
-				} else {
-					d.Nack(false, true)
-				}
-
-				QueueDelete(q.Name)
-
 			}
+			time.Sleep(time.Second)
 		}
 	}()
-
 }
 
 func (g *gameClass) listenCommands() {
@@ -148,33 +117,33 @@ func (g *gameClass) listenCommands() {
 	go func() {
 
 		for d := range msgs {
-			a := Command{}
-			err := json.Unmarshal(d.Body, &a)
+			c := Command{}
+			err := json.Unmarshal(d.Body, &c)
 			failOnError(err, "Failed to unmarshal command", "")
 
-			switch a.Action {
+			switch c.Action {
 			case KILL:
-				if _, ok := g.onlinePlayers[a.ID]; ok && a.ReplyTo != g.currentPlayerID{
-					//g.onlinePlayers[a.ID].HP += 5
-					g.onlinePlayers[a.ID].Score += 1
+				if _, ok := g.onlinePlayers[c.ID]; ok && c.ReplyTo != g.currentPlayerID{
+					g.onlinePlayers[c.ID].HP += 50
+					g.onlinePlayers[c.ID].Score += 1
 				}
 			case ATTACKED:
-				if _, ok := g.onlinePlayers[a.ID]; ok && a.ReplyTo != g.currentPlayerID{
-					g.onlinePlayers[a.ID].HP -= 5
+				if _, ok := g.onlinePlayers[c.ID]; ok && c.ReplyTo != g.currentPlayerID{
+					g.onlinePlayers[c.ID].HP -= 5
 				}
 			case TANK:
-				if _, ok := g.onlinePlayers[a.ID]; ok {
-					p := g.onlinePlayers[a.ID]
+				if _, ok := g.onlinePlayers[c.ID]; ok {
+					p := g.onlinePlayers[c.ID]
 
-					p.Username = a.Username
-					if a.Score != -1 {
-						p.Score = a.Score
+					p.Username = c.Username
+					if c.Score != -1 {
+						p.Score = c.Score
+						p.HP = c.HP
+						p.color = c.Color
 					}
-					p.HP = a.HP
-					p.color = a.Color
 					p.preX, p.preY = p.Position()
-					p.SetPosition(a.X, a.Y)
-					switch a.Direction {
+					p.SetPosition(c.X, c.Y)
+					switch c.Direction {
 					case UP:
 						TankUp(p.Tank)
 					case DOWN:
@@ -184,38 +153,31 @@ func (g *gameClass) listenCommands() {
 					case RIGHT:
 						TankRight(p.Tank)
 					}
-					if p.ID == Game().currentPlayerID && Menuhidden {
-						sX, sY := Game().Screen().Size()
+					if p.ID == Game().currentPlayerID && menuHidden {
+						sW, sH := Game().Screen().Size()
 						tX, tY := p.Position()
 						padding := 2
-						x := min(gameWidth-sX+padding, max(-padding,-sX/2+tX+5))
-						y := min(gameHeight-sY+padding,max(-padding,-sY/2+tY+5))
-						Game().Level().SetOffset(-x, -y)
-						//Game().Level().SetOffset(sX/2-tX-5, sY/2-tY-5)
-
+						sX := min(gameWidth-sW+padding, max(-padding,tX-sW/2+5))
+						sY := min(gameHeight-sH+padding,max(-padding,tY-sH/2+5))
+						Game().Level().SetOffset(-sX, -sY)
 					}
 
 				}
 			case BULLET:
-				b := NewBullet(a.X, a.Y, a.Direction, a.ID)
+				b := NewBullet(c.X, c.Y, c.Direction, c.ID)
 				g.level.AddEntity(b)
 			case DELETE:
-				if _, ok := g.onlinePlayers[a.ID]; ok {
+				if _, ok := g.onlinePlayers[c.ID]; ok {
 					log.Println("info delete received "+d.CorrelationId)
-					playersToDelete[a.ID] = true
-					g.level.RemoveEntity(g.onlinePlayers[a.ID])
-					delete(g.onlinePlayers, a.ID)
-				}
-			case CHECK:
-				if a.ID == g.currentPlayerID {
-					Publisher("", d.ReplyTo, amqp.Publishing{})
+					playersToDelete[c.ID] = true
+					g.level.RemoveEntity(g.onlinePlayers[c.ID])
+					delete(g.onlinePlayers, c.ID)
 				}
 			case REQUEST:
 				if _, ok := g.onlinePlayers[g.currentPlayerID]; ok {
 					player := g.onlinePlayers[g.currentPlayerID]
 					x,y := player.Position()
-					Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score: player.Score}.Send()
-					//Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score: player.Score}.Send()
+					Command{ID: player.ID, Action: TANK, X:x, Y:y, Direction:player.GetDirection(), Score: player.Score, ReplyTo: d.CorrelationId}.Send()
 				}
 			}
 
@@ -230,10 +192,9 @@ const (
 	TANK     = 0
 	BULLET   = 1
 	DELETE   = 2
-	CHECK    = 3
-	REQUEST      = 4
-	ATTACKED = 5
-	KILL     = 6
+	REQUEST  = 3
+	ATTACKED = 4
+	KILL     = 5
 ) // command action
 
 type Command struct {
@@ -246,7 +207,6 @@ type Command struct {
 }
 
 func (c Command) Send(){
-
 
 	if c.Action == TANK {
 		p := Game().onlinePlayers[Game().currentPlayerID]
@@ -262,13 +222,11 @@ func (c Command) Send(){
 		ContentType:     "application/json",
 		Body:            body,
 	}
-
-	if c.Action == CHECK {
-		msg.ReplyTo = c.ReplyTo
+	if c.Action == TANK && c.ReplyTo != "" {
+		Publisher("",c.ReplyTo, msg)
+	}else{
+		Publisher(CommandsExchange(),"", msg)
 	}
-
-	Publisher(CommandsExchange(),"", msg)
-
 }
 
 func min(a, b int) int {
