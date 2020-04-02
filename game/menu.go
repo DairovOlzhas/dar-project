@@ -102,7 +102,7 @@ func (m *menu) Draw(s *tl.Screen) {
 
 			tl.NewText(sx/2-11, 0, "press F1 to GO the BACK", tl.ColorRed, tl.ColorYellow).Draw(s)
 
-			text := tl.NewText(0,0, "Enter username(at most 10 chars):", tl.ColorBlack, tl.ColorWhite)
+			text := tl.NewText(0,0, "Enter username(at most 15 chars):", tl.ColorBlack, tl.ColorWhite)
 			ix, iy := text.Size()
 			text.SetPosition(sx/2-ix/2, sy/2-iy/2)
 			text.Draw(s)
