@@ -5,9 +5,9 @@ import (
 )
 
 var (
-	borderrColor         = tl.RgbTo256Color(0,0,0)
+	borderrColor         = tl.Attr(1)
 	edgeColor            = tl.ColorBlack
-	avoidanceBorderColor = tl.RgbTo256Color(16,16,16)
+	avoidanceBorderColor = tl.Attr(9)
 )
 
 
