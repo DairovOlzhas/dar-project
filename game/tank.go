@@ -113,7 +113,6 @@ func TankRightCanvas(tankBodyCell tl.Cell) tl.Canvas {
 		"  ████████\n"+
 		"  ████    \n"+
 		"████████  "
-	//canvasRight := tl.CanvasFromString(canv)
 
 	lines := strings.Split(canv, "\n")
 	runes := make([][]rune, len(lines))
@@ -142,20 +141,6 @@ func init() {
 
 }
 
-// Initial a new tank
-func NewTank(cell tl.Cell) *Tank {
-
-	tank := Tank{
-		Entity: tl.NewEntity(0, 0, 10, 5),
-	}
-
-	TankUp(&tank)
-
-	return &tank
-
-}
-
-// Initial a tank with position
 func NewTankXY(x, y int, cell tl.Cell, direction int) *Tank {
 
 	tank := Tank{
@@ -178,8 +163,6 @@ func NewTankXY(x, y int, cell tl.Cell, direction int) *Tank {
 }
 
 func TankUp(tank *Tank) {
-	//
-	//Refresh tank direction
 	canvas := TankUpCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = UP
@@ -187,7 +170,6 @@ func TankUp(tank *Tank) {
 
 func TankDown(tank *Tank) {
 
-	// Refresh tank direction
 	canvas := TankDownCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = DOWN
@@ -195,7 +177,6 @@ func TankDown(tank *Tank) {
 
 func TankLeft(tank *Tank) {
 
-	// Refresh tank direction
 	canvas := TankLeftCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = LEFT
@@ -203,7 +184,6 @@ func TankLeft(tank *Tank) {
 
 func TankRight(tank *Tank) {
 
-	// Refresh tank direction
 	canvas := TankRightCanvas(tl.Cell{Bg:tank.color})
 	tank.SetCanvas(&canvas)
 	tank.direction = RIGHT

@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	speed float32 = 0.3 //cell per tick
+	speed float32 = 0.3
 )
 
 type Bullet struct {

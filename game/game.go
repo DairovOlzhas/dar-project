@@ -109,7 +109,7 @@ func (g *gameClass) checkOnlinePlayers() {
 	}()
 }
 
-func (g *gameClass) listenCommands() {
+func (g *gameClass) listenCommands() 	{
 
 	msgs := Consumer(ReceiverQueue())
 
