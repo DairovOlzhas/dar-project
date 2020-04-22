@@ -82,6 +82,14 @@ func (b *Bullet) Tick(event tl.Event) {
 	}
 }
 
+func (b *Bullet) Collide(p tl.Physical) {
+	if _, ok := p.(*tl.Rectangle); ok {
+		if p.(*tl.Rectangle).Color() != avoidanceBorderColor{
+			Game().Level().RemoveEntity(b)
+		}
+	}
+}
+
 func (b *Bullet) Position() (int,int){
 	return int(b.x), int(b.y)
 }

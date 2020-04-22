@@ -2,12 +2,14 @@ package game
 
 import (
 	"github.com/streadway/amqp"
+	"log"
 )
 
 var (
+	Logs				= false
 	conn               	*amqp.Connection
 	ch                 	*amqp.Channel
-	rabbitMQURL        		= 	"amqp://tanks:sQcp3CHep58G@35.184.207.230:5672/"
+	rabbitMQURL        		= 	"amqp://tanks:ADf5KdBv8M91@35.184.207.230:5672/"
 	//rabbitMQURL        		= 	"amqp://guest:guest@localhost:5672/"
 	commandsExchange   		= 	"commands"
 	onlineExchange			= 	"onlines"
@@ -16,12 +18,12 @@ var (
 )
 
 func failOnError(err error, msg string, ok string) {
-	if err != nil {
-		//log.Fatalf("%s: %s", msg, err)
-	}
-	if ok != ""{
-		//log.Printf(" [*] " + ok)
-	}
+		if err != nil {
+			log.Fatalf("%s: %s", msg, err)
+		}
+		if ok != "" && Logs{
+			log.Printf(" [*] " + ok)
+		}
 }
 
 func RabbitMQ()(err error){

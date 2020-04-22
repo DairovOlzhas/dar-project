@@ -49,7 +49,7 @@ func NewPlayer() *player{
 		ID:       genRandString(32),
 		Username: Username(),
 		Score:    0,
-		HP: 	  100,
+		HP:       100,
 
 	}
 
@@ -173,6 +173,9 @@ func (p *player) CollideWorker(direction int) bool {
 }
 
 func collided(p tl.Physical, c tl.Physical, direction int) bool {
+	if _, ok := c.(*tl.Rectangle); ok && c.(*tl.Rectangle).Color() == avoidanceBorderColor {
+		return false
+	}
 	px, py := p.Position()
 	cx, cy := c.Position()
 	pw, ph := p.Size()

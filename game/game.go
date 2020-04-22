@@ -11,7 +11,7 @@ var (
 	game 	*gameClass
 	fps 			= 	90.0 // should be float
 	gameWidth 		=	150
-	gameHeight 		=	100
+	gameHeight 		=	60
 	backgroundColor = 	tl.ColorWhite
 	playersToDelete = 	make(map[string]bool)
 )
@@ -43,7 +43,7 @@ func Game() *gameClass {
 	return game
 }
 
-func (g *gameClass) Size() (int,int){
+func (g *gameClass) Size() (w int, h int){
 	return g.width, g.height
 }
 
