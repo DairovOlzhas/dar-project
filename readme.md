@@ -1,6 +1,6 @@
 ## Tank Game Online
 
-![gif](https://github.com/DairovOlzhas/dar-project/raw/master/media/tank.mp4)  
+![gif](https://github.com/DairovOlzhas/dar-project/raw/master/media/tank.gif)  
 
 Made by Olzhas and Rayan  
 with [Termloop](https://github.com/JoelOtter/termloop) engine
