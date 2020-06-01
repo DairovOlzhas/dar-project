@@ -67,7 +67,7 @@ func (m *menu) Tick(ev tl.Event) {
 					newUsername = make([]rune, 0)
 				case EXIT:
 					Command{ID: Game().currentPlayerID, Action:DELETE}.Send()
-					Game().Stop()
+					//Game().Stop()
 				}
 			}
 		} else {

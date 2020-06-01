@@ -9,8 +9,8 @@ var (
 	Logs				= false
 	conn               	*amqp.Connection
 	ch                 	*amqp.Channel
-	rabbitMQURL        		= 	"amqp://tanks:ADf5KdBv8M91@35.184.207.230:5672/"
-	//rabbitMQURL        		= 	"amqp://guest:guest@localhost:5672/"
+	//rabbitMQURL        		= 	"amqp://tanks:ADf5KdBv8M91@35.184.207.230:5672/"
+	rabbitMQURL        		= 	"amqp://guest:guest@localhost:5672/"
 	commandsExchange   		= 	"commands"
 	onlineExchange			= 	"onlines"
 	onlineQueue 		amqp.Queue
