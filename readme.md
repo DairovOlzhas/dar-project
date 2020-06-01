@@ -12,7 +12,7 @@ with [Termloop](https://github.com/JoelOtter/termloop) engine
 [Windows 64bit](https://github.com/DairovOlzhas/dar-project/raw/master/binaries/tank-game-win64.exe)  
  
 ### Control:  
-Moving ----- ←↑→↓  
+Moving ----- ←↑→↓  asdf
 Fire ---------- Space  
 Menu ------------- F1
 
