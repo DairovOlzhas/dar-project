@@ -33,28 +33,12 @@ func RabbitMQ()(err error){
 	ch, err = conn.Channel()
 	failOnError(err, "Failed to open a Channel", "Channel opened")
 
-	err = ch.ExchangeDeclare(
-		commandsExchange,
-		"fanout",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
+	err = ch.ExchangeDeclare(commandsExchange, "fanout", false, false, false, false, nil, )
 	failOnError(err, "Failed to open a Channel",  commandsExchange + " exchange declared")
 	receiverQueue = QueueDeclare("", true)
 	QueueBind(receiverQueue.Name, commandsExchange)
 
-	err = ch.ExchangeDeclare(
-		onlineExchange,
-		"fanout",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
+	err = ch.ExchangeDeclare(onlineExchange, "fanout", false, false, false, false, nil, )
 	failOnError(err, "Failed to open a Channel",  onlineExchange + " exchange declared")
 	onlineQueue = QueueDeclare("", true)
 	QueueBind(onlineQueue.Name, onlineExchange)

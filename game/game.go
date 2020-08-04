@@ -9,7 +9,7 @@ import (
 
 var (
 	game 	*gameClass
-	fps 			= 	90.0 // should be float
+	fps 			= 	90.0 // бөлшек болу керек
 	gameWidth 		=	150
 	gameHeight 		=	60
 	backgroundColor = 	tl.ColorWhite

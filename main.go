@@ -22,8 +22,8 @@ var (
 func main() {
 	app := &cli.App{
 		Flags:flags,
-		Name: "Lenin's Tank",
-		Usage: " 'F1': to go MENU; 'Arrows': to MOVE; 'Space': to fire; ",
+		Name: "Tank",
+	asdfasdf	Usage: " 'F1': to go MENU; 'Arrows': to MOVE; 'Space': to fire; ",
 		Action: run,
 	}
 	err := app.Run(os.Args)
